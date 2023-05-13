@@ -1,12 +1,13 @@
 package sd2223.trab1.servers.java;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import sd2223.trab1.servers.Domain;
 
 
 public abstract class AbstractServer {
-	protected static String SERVER_BASE_URI = "http://%s:%s%s";
+	protected static String SERVER_BASE_URI = "https://%s:%s%s";
 	protected static final String INETADDR_ANY = "0.0.0.0";
 
 	final protected Logger Log;
@@ -19,7 +20,7 @@ public abstract class AbstractServer {
 		this.service = Domain.get() + ":" + service;
 	}
 		
-	abstract protected void start();
+	abstract protected void start() throws NoSuchAlgorithmException;
 	
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
