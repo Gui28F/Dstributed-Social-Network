@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sd2223-tp1" />
+        <module name="Trab1-2F-SD" />
       </profile>
     </annotationProcessing>
   </component>

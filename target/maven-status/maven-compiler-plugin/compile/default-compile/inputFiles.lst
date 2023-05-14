@@ -1,61 +1,61 @@
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\soap\SoapFeedsClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapUsersServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\rest\RestClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestFeedsPushResource.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\AbstractRestServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsPush.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\soap\SoapFeedsPullClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\FeedsException.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\rest\FeedsServicePush.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\soap\SoapUsersClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsPreconditions.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\rest\UsersService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapFeedsPullWebService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\utils\IP.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\rest\RestUsersClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapFeedsPushWebService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\UsersService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\java\FeedsPush.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\Clients.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestUsersServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\rest\RestFeedsClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsPullPreconditions.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapFeedsServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\ClientFactory.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\rest\RestFeedsPushClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapWebService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\soap\SoapClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\java\Feeds.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\PushMessage.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestFeedsPullResource.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapFeedsWebService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\rest\FeedsServicePull.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\rest\RestFeedsPullClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\GenericExceptionMapper.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestUsersResource.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\Domain.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestResource.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\FeedsService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\clients\soap\SoapFeedsPushClient.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\rest\FeedsService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\AbstractServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\utils\Args.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\SoapUsersWebService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\pull\FeedsService.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\utils\Sleep.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\CustomLoggingFilter.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\Message.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsPushPreconditions.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaUsers.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestFeedsServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\java\Result.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsPull.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\User.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\java\JavaFeedsCommon.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\java\Users.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\java\FeedsPull.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\rest\RestFeedsResource.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\discovery\Discovery.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\servers\soap\AbstractSoapServer.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\UsersException.java
-C:\Users\ASUS\Ambiente de Trabalho\PC\Faculdade\3ANO\2 Semestre\SD\Práticas\Trab1-2F-SD\src\sd2223\trab1\api\soap\push\FeedsService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/java/Result.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestUsersResource.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/soap/SoapFeedsPushClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapFeedsPushWebService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsPush.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/CustomLoggingFilter.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsPullPreconditions.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/soap/SoapFeedsClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/FeedsService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapUsersServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/AbstractServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/rest/RestUsersClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/UsersException.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/rest/RestFeedsPushClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsPull.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapUsersWebService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/pull/FeedsService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/java/Users.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestFeedsServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestFeedsResource.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestFeedsPushResource.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestUsersServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/java/Feeds.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/rest/FeedsServicePull.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/java/FeedsPull.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/rest/RestFeedsClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapFeedsServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsCommon.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapFeedsWebService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/Clients.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/AbstractSoapServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/soap/SoapFeedsPullClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapWebService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/discovery/Discovery.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/soap/SoapFeedsPullWebService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/ClientFactory.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/utils/Sleep.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/soap/SoapUsersClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/GenericExceptionMapper.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/rest/RestFeedsPullClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/UsersService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/User.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestResource.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/Message.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/AbstractRestServer.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/FeedsException.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/utils/IP.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/soap/SoapClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/Domain.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/rest/RestFeedsPullResource.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaUsers.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/soap/push/FeedsService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/rest/FeedsService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/rest/UsersService.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/java/FeedsPush.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/PushMessage.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsPreconditions.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/clients/rest/RestClient.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/api/rest/FeedsServicePush.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/sd2223/trab1/servers/java/JavaFeedsPushPreconditions.java
+/home/gui/Desktop/Faculdade/3Ano/2 Semestre/SD/Trab1-2F-SD/src/utils/Args.java
