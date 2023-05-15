@@ -46,7 +46,6 @@ public class JavaUsers implements Users {
 		var user = users.get(name);
 		if (user == null)
 			return error(NOT_FOUND);
-		
 		if (wrongPassword(user, pwd))
 			return error(FORBIDDEN);
 		else

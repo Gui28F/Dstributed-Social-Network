@@ -17,7 +17,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Result.ErrorCode;
+import sd2223.trab1.tls.InsecureHostnameVerifier;
 import utils.Sleep;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class RestClient {
 	private static Logger Log = Logger.getLogger(RestClient.class.getName());

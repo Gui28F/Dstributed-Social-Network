@@ -4,14 +4,15 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import javax.net.ssl.SSLContext;
+
 import com.sun.net.httpserver.HttpsConfigurator;
 import com.sun.net.httpserver.HttpsServer;
+
 import jakarta.xml.ws.Endpoint;
 import sd2223.trab1.discovery.Discovery;
 import sd2223.trab1.servers.java.AbstractServer;
 import utils.IP;
-
-import javax.net.ssl.SSLContext;
 
 public class AbstractSoapServer<T> extends AbstractServer {
     private static final String SOAP_CTX = "/soap";
@@ -23,6 +24,8 @@ public class AbstractSoapServer<T> extends AbstractServer {
         this.webservice = webservice;
         try {
             this.server = HttpsServer.create(new InetSocketAddress(IP.hostAddress(), port), 0);
+            server.setExecutor(Executors.newCachedThreadPool());
+            server.setHttpsConfigurator(new HttpsConfigurator(SSLContext.getDefault()));
         } catch (Exception e) {
             Log.severe(e.getMessage());
         }
@@ -35,14 +38,8 @@ public class AbstractSoapServer<T> extends AbstractServer {
     }
 
     protected void start() {
-        try {
-            server.setExecutor(Executors.newCachedThreadPool());
-            server.setHttpsConfigurator(new HttpsConfigurator(SSLContext.getDefault()));
-            Endpoint.publish(serverURI.replace(IP.hostAddress(), INETADDR_ANY), webservice);
-            Discovery.getInstance().announce(service, serverURI);
-            Log.info(String.format("%s Soap Server ready @ %s\n", service, serverURI));
-        } catch (Exception e) {
-            Log.severe(e.getMessage());
-        }
+        Endpoint.publish(serverURI.replace(IP.hostAddress(), INETADDR_ANY), webservice);
+        Discovery.getInstance().announce(service, serverURI);
+        Log.info(String.format("%s Soap Server ready @ %s\n", service, serverURI));
     }
 }
