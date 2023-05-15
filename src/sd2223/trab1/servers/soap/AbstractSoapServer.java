@@ -38,7 +38,9 @@ public class AbstractSoapServer<T> extends AbstractServer {
     }
 
     protected void start() {
-        Endpoint.publish(serverURI.replace(IP.hostAddress(), INETADDR_ANY), webservice);
+        var endpoint = Endpoint.create(webservice);
+        endpoint.publish(server.createContext(SOAP_CTX));
+        server.start();
         Discovery.getInstance().announce(service, serverURI);
         Log.info(String.format("%s Soap Server ready @ %s\n", service, serverURI));
     }
