@@ -39,7 +39,6 @@ public abstract class JavaFeedsCommon<T extends Feeds>  implements Feeds {
 	
 	@Override
 	public Result<Long> postMessage(String user, String pwd, Message msg) {
-		
 		var preconditionsResult = preconditions.postMessage(user, pwd, msg);
 		if( ! preconditionsResult.isOK() )
 			return preconditionsResult;
