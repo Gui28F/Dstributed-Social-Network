@@ -5,76 +5,77 @@ package sd2223.trab1.api;
  */
 public class Message {
 
-	private long id;
-	private String user;
-	private String domain;
-	private long creationTime;
-	private String text;
+    private long id;
+    private String user;
+    private String domain;
+    private long creationTime;
+    private String text;
 
-	public Message() {
-		this.id = -1;
-		this.user = null;
-		this.domain = null;
-		this.creationTime = -1;
-		this.text = null;
-	}
-	public Message(long id, String user, String domain, String text) {
-		this.id = id;
-		this.user = user;
-		this.domain = domain;
-		this.creationTime = System.currentTimeMillis();
-		this.text = text;
-	}
+    public Message() {
+        this.id = -1;
+        this.user = null;
+        this.domain = null;
+        this.creationTime = -1;
+        this.text = null;
+    }
 
-	public long getId() {
-		return id;
-	}
+    public Message(long id, String user, String domain, String text) {
+        this.id = id;
+        this.user = user;
+        this.domain = domain;
+        this.creationTime = System.currentTimeMillis();
+        this.text = text;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public String getUser() {
-		return user;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+    public String getUser() {
+        return user;
+    }
 
-	public String getDomain() {
-		return domain;
-	}
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    public String getDomain() {
+        return domain;
+    }
 
-	public long getCreationTime() {
-		return creationTime;
-	}
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	public void setCreationTime(long creationTime) {
-		this.creationTime = creationTime;
-	}
+    public long getCreationTime() {
+        return creationTime;
+    }
 
-	public String getText() {
-		return text;
-	}
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+    public String getText() {
+        return text;
+    }
 
-//	@Override
-//	public String toString() {
-//		return "Message [id=" + id + ", user=" + user + ", domain=" + domain + ", creationTime=" + creationTime
-//				+ ", text=" + text + "]";
-//	}
-	
-	@Override
-	public String toString() {
-		return "Msg[" + id + "]";
-	}
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "Message [id=" + id + ", user=" + user + ", domain=" + domain + ", creationTime=" + creationTime
+                + ", text=" + text + "]";
+    }
+
+    //@Override
+  //  public String toString() {
+     //   return "Msg[" + id + "]";
+    //}
 
 }

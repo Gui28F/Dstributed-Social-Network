@@ -21,7 +21,7 @@ public class ProxyFeedsServer extends AbstractRestServer {
 
     @Override
     protected void registerResources(ResourceConfig config) {
-        config.register(Mastodon.getInstance());
+        config.register(ProxyRestFeedsResource.class);
     }
 
     public static void main(String[] args) throws Exception {
