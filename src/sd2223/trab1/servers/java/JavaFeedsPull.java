@@ -24,103 +24,111 @@ import sd2223.trab1.api.java.Result;
 import sd2223.trab1.servers.Domain;
 
 public class JavaFeedsPull extends JavaFeedsCommon<FeedsPull> implements FeedsPull {
-	private static final long FEEDS_CACHE_EXPIRATION = 3000;
+    private static final long FEEDS_CACHE_EXPIRATION = 3000;
 
-	public JavaFeedsPull( ){
-		super( new JavaFeedsPullPreconditions());
-	}
-	
-	final LoadingCache<FeedInfoKey, Result<List<Message>>> cache = CacheBuilder.newBuilder()
-			.expireAfterWrite(Duration.ofMillis(FEEDS_CACHE_EXPIRATION)).removalListener((e) -> {
-			}).build(new CacheLoader<>() {
-				@Override
-				public Result<List<Message>> load(FeedInfoKey info) throws Exception {
-					var res = FeedsPullClients.get(info.domain()).pull_getTimeFilteredPersonalFeed(info.user(), info.time());
-					if (res.error() == TIMEOUT)
-						return error(BAD_REQUEST);
+    public JavaFeedsPull() {
+        super(new JavaFeedsPullPreconditions());
+    }
 
-					return res;
-				}
-			});
+    final LoadingCache<FeedInfoKey, Result<List<Message>>> cache = CacheBuilder.newBuilder()
+            .expireAfterWrite(Duration.ofMillis(FEEDS_CACHE_EXPIRATION)).removalListener((e) -> {
+            }).build(new CacheLoader<>() {
+                @Override
+                public Result<List<Message>> load(FeedInfoKey info) throws Exception {
+                    var res = FeedsPullClients.get(info.domain()).pull_getTimeFilteredPersonalFeed(info.user(), info.time());
+                    if (res.error() == TIMEOUT)
+                        return error(BAD_REQUEST);
 
-	@Override
-	public Result<Message> getMessage(String user, long mid) {
-		
-		var preconditionsResult = preconditions.getMessage(user, mid);
-		if( ! preconditionsResult.isOK() )
-			return preconditionsResult;
+                    return res;
+                }
+            });
 
-		FeedInfo ufi = feeds.get(user);
-		if( ufi == null )
-			return error( NOT_FOUND );
-		
-		synchronized (ufi.user()) {
-			if (ufi.messages().contains(mid))
-				return ok(messages.get(mid));
+    @Override
+    public Result<Message> getMessage(String user, long mid) {
 
-			var list = getMessages(user, -1L);
-			if (!list.isOK())
-				return error(list.error());
+        var preconditionsResult = preconditions.getMessage(user, mid);
+        //TODO
+        if (!preconditionsResult.isOK())
+            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
+                return Result.ok(preconditionsResult.value());
+            else
+                return preconditionsResult;
 
-			var res = list.value().stream().filter(m -> m.getId() == mid).findFirst();
-			return res.isPresent() ? ok(res.get()) : error(NOT_FOUND);
-		}
-	}
+        FeedInfo ufi = feeds.get(user);
+        if (ufi == null)
+            return error(NOT_FOUND);
 
-	@Override
-	public Result<List<Message>> getMessages(String user, long time) {
+        synchronized (ufi.user()) {
+            if (ufi.messages().contains(mid))
+                return ok(messages.get(mid));
 
-		var preconditionsResult = preconditions.getMessages(user, time);
-		if( ! preconditionsResult.isOK() )
-			return preconditionsResult;
+            var list = getMessages(user, -1L);
+            if (!list.isOK())
+                return error(list.error());
 
-		FeedInfo ufi = feeds.get(user);
-		if( ufi == null )
-			return ok( Collections.emptyList() );
-		
-		synchronized (ufi.user()) {
-			var msgs = new ArrayList<Message>();
-			msgs.addAll( ufi.messages().stream().map( messages::get).filter(m -> m.getCreationTime() > time).toList());
+            var res = list.value().stream().filter(m -> m.getId() == mid).findFirst();
+            return res.isPresent() ? ok(res.get()) : error(NOT_FOUND);
+        }
+    }
 
-			for (var s : ufi.following())
-				msgs.addAll(getCachedPersonalFeed(s, time));
+    @Override
+    public Result<List<Message>> getMessages(String user, long time) {
 
-			return ok(msgs);
-		}
-	}
-	
-	public Result<List<Message>> pull_getTimeFilteredPersonalFeed(String user, long time) {
-		
-		var preconditionsResult = preconditions.pull_getTimeFilteredPersonalFeed(user, time);
-		if( ! preconditionsResult.isOK() )
-			return preconditionsResult;
+        var preconditionsResult = preconditions.getMessages(user, time);
+        //TODO
+        if (!preconditionsResult.isOK())
+            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
+                return Result.ok(preconditionsResult.value());
+            else
+                return preconditionsResult;
 
-		return ok(super.getTimeFilteredPersonalFeed(user, time));
-	}
+        FeedInfo ufi = feeds.get(user);
+        if (ufi == null)
+            return ok(Collections.emptyList());
 
-	private List<Message> getCachedPersonalFeed(String name, long time) {
-		try {
-			if (FeedUser.from(name).isRemoteUser())
-				return cache.get( FeedInfoKey.from(name, time) ).value();
-			else
-				return super.getTimeFilteredPersonalFeed(name, time);
-		} catch (Exception x) {
-			x.printStackTrace();
-		}
-		return Collections.emptyList();
-	}
-	
-	@Override
-	protected void deleteFromUserFeed( String user, Set<Long> mids ) {
-		messages.keySet().removeAll( mids );
-	}
+        synchronized (ufi.user()) {
+            var msgs = new ArrayList<Message>();
+            msgs.addAll(ufi.messages().stream().map(messages::get).filter(m -> m.getCreationTime() > time).toList());
 
-	
-	static record FeedInfoKey(String user, String domain, long time) {
-		static FeedInfoKey from(String name, long time) {
-			var idx = name.indexOf('@');
-			var domain = idx < 0 ? Domain.get() : name.substring(idx + 1);
-			return new FeedInfoKey(name, domain, time);
-		}
-	}
+            for (var s : ufi.following())
+                msgs.addAll(getCachedPersonalFeed(s, time));
+
+            return ok(msgs);
+        }
+    }
+
+    public Result<List<Message>> pull_getTimeFilteredPersonalFeed(String user, long time) {
+
+        var preconditionsResult = preconditions.pull_getTimeFilteredPersonalFeed(user, time);
+        if (!preconditionsResult.isOK())
+            return preconditionsResult;
+
+        return ok(super.getTimeFilteredPersonalFeed(user, time));
+    }
+
+    private List<Message> getCachedPersonalFeed(String name, long time) {
+        try {
+            if (FeedUser.from(name).isRemoteUser())
+                return cache.get(FeedInfoKey.from(name, time)).value();
+            else
+                return super.getTimeFilteredPersonalFeed(name, time);
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    protected void deleteFromUserFeed(String user, Set<Long> mids) {
+        messages.keySet().removeAll(mids);
+    }
+
+
+    static record FeedInfoKey(String user, String domain, long time) {
+        static FeedInfoKey from(String name, long time) {
+            var idx = name.indexOf('@');
+            var domain = idx < 0 ? Domain.get() : name.substring(idx + 1);
+            return new FeedInfoKey(name, domain, time);
+        }
+    }
 }

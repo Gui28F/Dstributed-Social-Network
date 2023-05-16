@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 
 public class ProxyFeedsServer extends AbstractRestServer {
-    public static final int PORT = 4567;
+    public static final int PORT = 5567;
 
     private static Logger Log = Logger.getLogger(ProxyFeedsServer.class.getName());
 
@@ -21,12 +21,13 @@ public class ProxyFeedsServer extends AbstractRestServer {
 
     @Override
     protected void registerResources(ResourceConfig config) {
-        config.register(Mastodon.class);
+        config.register(Mastodon.getInstance());
     }
 
     public static void main(String[] args) throws Exception {
         Args.use(args);
         Domain.set(args[0], Long.valueOf(args[1]));
+        //TODO como é que passamos e usamos a flag the true ou false do enunciado para manter ou limpar o estado?
         new ProxyFeedsServer().start();
     }
 }
