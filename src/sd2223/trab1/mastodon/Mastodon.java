@@ -55,7 +55,7 @@ public class Mastodon implements Feeds {
     static final String TIMELINES_PATH = "/api/v1/timelines/home?since_id=";
     static final String ACCOUNT_FOLLOWING_PATH = "/api/v1/accounts/%s/following";
     static final String VERIFY_CREDENTIALS_PATH = "/api/v1/accounts/verify_credentials";
-    static final String SEARCH_ACCOUNTS_PATH = "/api/v1/accounts/search";
+    static final String SEARCH_ACCOUNTS_PATH = "/api/v1/accounts/search?q=";
     static final String ACCOUNT_FOLLOW_PATH = "/api/v1/accounts/%s/follow";
     static final String ACCOUNT_UNFOLLOW_PATH = "/api/v1/accounts/%s/unfollow";
 
