@@ -20,7 +20,7 @@ public record PostStatusResult(String id, String content, String created_at, Mas
     }
 
     public Message toMessage() {
-        var m = new Message(getId(), "quim_coubes", "ourorg0", getText());
+        var m = new Message(getId(), account.username(), "ourorg0", getText());
         m.setCreationTime(getCreationTime());
         return m;
     }

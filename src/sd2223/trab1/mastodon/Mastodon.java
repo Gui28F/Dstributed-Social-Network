@@ -29,7 +29,7 @@ public class Mastodon implements Feeds {
     static String MASTODON_NOVA_SERVER_URI = "http://10.170.138.52:3000";
     static String MASTODON_SOCIAL_SERVER_URI = "https://mastodon.social";
 
-    static String MASTODON_SERVER_URI = MASTODON_SOCIAL_SERVER_URI;
+    static String MASTODON_SERVER_URI = MASTODON_NOVA_SERVER_URI;
 
 
     /*private static final String clientKey = "PjbCuhbYnjitka6UYn6onK2CX32jMYPqUfGovsOnwIA";
@@ -37,20 +37,20 @@ public class Mastodon implements Feeds {
     private static final String accessTokenStr = "yhWvdCGdiA7h-yQIpqAqDcGGeYgcOgrsHRmfhv9FG3U";
     */
     //quim_coubes
-    private static final String clientKey = "z59r22ZOfNEhS7S6JG8J6uhELhKv29zJhrNYcKWkmOs";
+    /*private static final String clientKey = "z59r22ZOfNEhS7S6JG8J6uhELhKv29zJhrNYcKWkmOs";
     private static final String clientSecret = "O8nk_cHc_A0c_cYR4XINJ-abYJbtOl6vW9UArYCr7Ms";
     private static final String accessTokenStr = "-Qwar5svmwKh1yexOeCr4ONvYmMG8m8DC2eFWH0-ZyE";
-
-
-   /* private static final String clientKey = "df6stWVa3_nYHJKE-Rq2EIO-6Bjdwej707h2wgtQjV0";
-    private static final String clientSecret = "maJWFGlXqirEQS0y9oSJcIXyhU2-0zJj7liyNEsAFbc";
-    private static final String accessTokenStr = "Lx2ZetIS2xYCjzaJzUT-Nc2ddlpk7UuilVYBRzSJ7UI";
 */
+
+    /* private static final String clientKey = "df6stWVa3_nYHJKE-Rq2EIO-6Bjdwej707h2wgtQjV0";
+     private static final String clientSecret = "maJWFGlXqirEQS0y9oSJcIXyhU2-0zJj7liyNEsAFbc";
+     private static final String accessTokenStr = "Lx2ZetIS2xYCjzaJzUT-Nc2ddlpk7UuilVYBRzSJ7UI";
+ */
     //NOVA
-    /*    private static final String clientKey = "bTsA8mwUlJmbDI2jdpOiL1NI6L8WdsyPrIaMYmSMHQI";
-        private static final String clientSecret = "DGkAHzR1InSQ7E07u7mUWAwuAprf8-Issva0sXLYunMc";
-        private static final String accessTokenStr = "Avypx1TkKj1oXlyZcJ7qcgGPlyxKe8npFoW2_6ZraoI";
-*/
+    private static final String clientKey = "bTsA8mwUlJmbDI2jdpOiL1NI6L8WdsyPrIaMYmSMHQI";
+    private static final String clientSecret = "DGkAHzR1InSQ7E07u7mUWAwuAprf8-Issva0sXLYunMc";
+    private static final String accessTokenStr = "Avypx1TkKj1oXlyZcJ7qcgGPlyxKe8npFoW2_6ZraoI";
+
     static final String STATUSES_PATH = "/api/v1/statuses";
     static final String TIMELINES_PATH = "/api/v1/timelines/home?since_id=";
     static final String ACCOUNT_FOLLOWING_PATH = "/api/v1/accounts/%s/following";
@@ -70,7 +70,7 @@ public class Mastodon implements Feeds {
         try {
             service = new ServiceBuilder(clientKey).apiSecret(clientSecret).build(MastodonApi.instance());
             accessToken = new OAuth2AccessToken(accessTokenStr);
-          //  cleanStatus();
+            //  cleanStatus();
         } catch (Exception x) {
             x.printStackTrace();
             System.exit(0);
@@ -125,6 +125,7 @@ public class Mastodon implements Feeds {
             // id += random.nextLong(1000);
             //System.out.println(id);
             id = id << 16;
+            id++;
             // System.out.println(id);
             // id += random.nextLong((long) Math.pow(2, 16));
             final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(TIMELINES_PATH + id));
@@ -132,7 +133,6 @@ public class Mastodon implements Feeds {
             service.signRequest(accessToken, request);
 
             Response response = service.execute(request);
-
             if (response.getCode() == HTTP_OK) {
                 List<PostStatusResult> res = JSON.decode(response.getBody(), new TypeToken<List<PostStatusResult>>() {
                 });
@@ -174,6 +174,7 @@ public class Mastodon implements Feeds {
 
             Response response = service.execute(request);
             if (response.getCode() == HTTP_OK) {
+                System.out.println(response.getBody());
                 PostStatusResult res = JSON.decode(response.getBody(), new TypeToken<PostStatusResult>() {
                 });
                 //Message msg = res.toMessage();
@@ -189,13 +190,14 @@ public class Mastodon implements Feeds {
 
     private Result<Long> getUserID(String user) {
         try {
-            final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(SEARCH_ACCOUNTS_PATH + user));
+            String userName = user.split("@")[0];
+            final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(SEARCH_ACCOUNTS_PATH + userName));
             service.signRequest(accessToken, request);
             Response response = service.execute(request);
             if (response.getCode() == HTTP_OK) {
                 List<PostStatusResult> res = JSON.decode(response.getBody(), new TypeToken<List<PostStatusResult>>() {
                 });
-                if (res.size() == 1)
+                if (!res.isEmpty())
                     return ok(res.get(0).getId());
                     //TODO retorna o que se a pesquisa der mais do que um user?
                 else return error(NOT_FOUND);
