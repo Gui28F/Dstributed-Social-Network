@@ -9,8 +9,8 @@ import sd2223.trab1.servers.java.JavaFeedsPush;
 @Singleton
 public class RestFeedsPushResource extends RestFeedsResource<FeedsPush> implements FeedsServicePush {
 
-	public RestFeedsPushResource() {
-		super( new JavaFeedsPush());
+	public RestFeedsPushResource(String secret) {
+		super( new JavaFeedsPush(secret));
 	}
 
 	@Override

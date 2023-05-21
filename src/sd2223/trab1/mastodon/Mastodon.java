@@ -13,14 +13,10 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.reflect.TypeToken;
-import sd2223.trab1.servers.java.JavaFeedsCommon;
-import sd2223.trab1.servers.java.JavaFeedsPull;
+
 import utils.JSON;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.security.SecureRandom;
 import java.util.List;
 
 import static sd2223.trab1.api.java.Result.ErrorCode.*;
@@ -35,22 +31,28 @@ public class Mastodon implements Feeds {
 
     static String MASTODON_SERVER_URI = MASTODON_SOCIAL_SERVER_URI;
 
-    /**
-     * private static final String clientKey = "z59r22ZOfNEhS7S6JG8J6uhELhKv29zJhrNYcKWkmOs";
-     * private static final String clientSecret = "O8nk_cHc_A0c_cYR4XINJ-abYJbtOl6vW9UArYCr7Ms";
-     * private static final String accessTokenStr = "-Qwar5svmwKh1yexOeCr4ONvYmMG8m8DC2eFWH0-ZyE";
-     **/
-    private static final String clientKey = "df6stWVa3_nYHJKE-Rq2EIO-6Bjdwej707h2wgtQjV0";
+
+    /*private static final String clientKey = "PjbCuhbYnjitka6UYn6onK2CX32jMYPqUfGovsOnwIA";
+    private static final String clientSecret = "yTtbhCVIIPoFUpVyfjZyfKhUCslM14uj09vxn76QnDc";
+    private static final String accessTokenStr = "yhWvdCGdiA7h-yQIpqAqDcGGeYgcOgrsHRmfhv9FG3U";
+    */
+    //quim_coubes
+    private static final String clientKey = "z59r22ZOfNEhS7S6JG8J6uhELhKv29zJhrNYcKWkmOs";
+    private static final String clientSecret = "O8nk_cHc_A0c_cYR4XINJ-abYJbtOl6vW9UArYCr7Ms";
+    private static final String accessTokenStr = "-Qwar5svmwKh1yexOeCr4ONvYmMG8m8DC2eFWH0-ZyE";
+
+
+   /* private static final String clientKey = "df6stWVa3_nYHJKE-Rq2EIO-6Bjdwej707h2wgtQjV0";
     private static final String clientSecret = "maJWFGlXqirEQS0y9oSJcIXyhU2-0zJj7liyNEsAFbc";
     private static final String accessTokenStr = "Lx2ZetIS2xYCjzaJzUT-Nc2ddlpk7UuilVYBRzSJ7UI";
-
-    /**
-     * private static final String clientKey = "bTsA8mwUlJmbDI2jdpOiL1NI6L8WdsyPrIaMYmSMHQI";
-     * private static final String clientSecret = "DGkAHzR1InSQ7E07u7mUWAwuAprf8-Issva0sXLYunMc";
-     * private static final String accessTokenStr = "pxZCUc3CxuCFP3Pksb-9UPM2auY0spPYFK8VzZ1JuHM";
-     **/
+*/
+    //NOVA
+    /*    private static final String clientKey = "bTsA8mwUlJmbDI2jdpOiL1NI6L8WdsyPrIaMYmSMHQI";
+        private static final String clientSecret = "DGkAHzR1InSQ7E07u7mUWAwuAprf8-Issva0sXLYunMc";
+        private static final String accessTokenStr = "Avypx1TkKj1oXlyZcJ7qcgGPlyxKe8npFoW2_6ZraoI";
+*/
     static final String STATUSES_PATH = "/api/v1/statuses";
-    static final String TIMELINES_PATH = "/api/v1/timelines/home";
+    static final String TIMELINES_PATH = "/api/v1/timelines/home?since_id=";
     static final String ACCOUNT_FOLLOWING_PATH = "/api/v1/accounts/%s/following";
     static final String VERIFY_CREDENTIALS_PATH = "/api/v1/accounts/verify_credentials";
     static final String SEARCH_ACCOUNTS_PATH = "/api/v1/accounts/search";
@@ -68,6 +70,7 @@ public class Mastodon implements Feeds {
         try {
             service = new ServiceBuilder(clientKey).apiSecret(clientSecret).build(MastodonApi.instance());
             accessToken = new OAuth2AccessToken(accessTokenStr);
+          //  cleanStatus();
         } catch (Exception x) {
             x.printStackTrace();
             System.exit(0);
@@ -75,14 +78,22 @@ public class Mastodon implements Feeds {
     }
 
     synchronized public static Mastodon getInstance() {
-        if (impl == null)
+        if (impl == null) {
             impl = new Mastodon();
+        }
         return impl;
     }
 
     private String getEndpoint(String path, Object... args) {
         var fmt = MASTODON_SERVER_URI + path;
         return String.format(fmt, args);
+    }
+
+    private void cleanStatus() {
+        List<Message> msgs = getMessages("", 0).value();
+        for (Message msg : msgs) {
+            removeFromPersonalFeed("", msg.getId(), "");
+        }
     }
 
     @Override
@@ -110,7 +121,13 @@ public class Mastodon implements Feeds {
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         try {
-            final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(TIMELINES_PATH));
+            long id = time;
+            // id += random.nextLong(1000);
+            //System.out.println(id);
+            id = id << 16;
+            // System.out.println(id);
+            // id += random.nextLong((long) Math.pow(2, 16));
+            final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(TIMELINES_PATH + id));
 
             service.signRequest(accessToken, request);
 
@@ -120,7 +137,7 @@ public class Mastodon implements Feeds {
                 List<PostStatusResult> res = JSON.decode(response.getBody(), new TypeToken<List<PostStatusResult>>() {
                 });
 
-                return ok(res.stream().map(PostStatusResult::toMessage).filter(m -> m.getCreationTime() > time).toList());
+                return ok(res.stream().map(PostStatusResult::toMessage).toList());
             }
             return error(getErrorCodeFrom(response.getCode()));
         } catch (Exception x) {
@@ -138,20 +155,14 @@ public class Mastodon implements Feeds {
             service.signRequest(accessToken, request);
 
             Response response = service.execute(request);
-            System.out.println(response);
-            if (response.getCode() == HTTP_OK)
+
+            if (response.getCode() == HTTP_OK) {
                 return ok();
-            return error(getErrorCodeFrom(response.getCode()));
+            }
         } catch (Exception x) {
             x.printStackTrace();
         }
         return error(Result.ErrorCode.INTERNAL_ERROR);
-    }
-
-    private void fillMsg(Message msg, String user) {
-        JavaFeedsCommon.FeedUser u = JavaFeedsCommon.FeedUser.from(user);
-        msg.setUser(u.name());
-        msg.setDomain(u.domain());
     }
 
     @Override
@@ -165,9 +176,9 @@ public class Mastodon implements Feeds {
             if (response.getCode() == HTTP_OK) {
                 PostStatusResult res = JSON.decode(response.getBody(), new TypeToken<PostStatusResult>() {
                 });
-                Message msg = res.toMessage();
-                fillMsg(msg, user);
-                return ok(msg);
+                //Message msg = res.toMessage();
+                // fillMsg(msg, user);
+                return ok(res.toMessage());
             }
             return error(getErrorCodeFrom(response.getCode()));
         } catch (Exception x) {
@@ -262,7 +273,7 @@ public class Mastodon implements Feeds {
 
     //TODO COMO È QUE SE FAZ E È SUPOSTO FAZER?
     @Override
-    public Result<Void> deleteUserFeed(String user) {
+    public Result<Void> deleteUserFeed(String user, String secret) {
         return error(NOT_IMPLEMENTED);
     }
 }

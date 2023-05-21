@@ -10,7 +10,7 @@ import sd2223.trab1.api.rest.FeedsService;
 @Singleton
 public abstract class RestFeedsResource<T extends Feeds> extends RestResource implements FeedsService {
 
-	public RestFeedsResource(T impl ) {
+	public RestFeedsResource(T impl) {
 		this.impl = impl;
 	}
 
@@ -51,7 +51,7 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
 	}
 
 	@Override
-	public void deleteUserFeed(String user) {
-		super.fromJavaResult( impl.deleteUserFeed(user));
+	public void deleteUserFeed(String user, String secret) {
+		super.fromJavaResult( impl.deleteUserFeed(user, secret));
 	}
 }

@@ -11,13 +11,13 @@ import sd2223.trab1.servers.java.JavaFeedsPull;
 @Singleton
 public class RestFeedsPullResource extends RestFeedsResource<FeedsPull> implements FeedsServicePull {
 
-	public RestFeedsPullResource() {
-		super(new JavaFeedsPull());
-	}
+    public RestFeedsPullResource(String secret) {
+        super(new JavaFeedsPull(secret));
+    }
 
-	@Override
-	public List<Message> pull_getTimeFilteredPersonalFeed(String user, long time) {
-		return super.fromJavaResult( impl.pull_getTimeFilteredPersonalFeed(user, time));
-	}
+    @Override
+    public List<Message> pull_getTimeFilteredPersonalFeed(String user, long time) {
+        return super.fromJavaResult(impl.pull_getTimeFilteredPersonalFeed(user, time));
+    }
 
 }

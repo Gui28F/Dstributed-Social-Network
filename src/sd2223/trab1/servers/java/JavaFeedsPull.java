@@ -26,8 +26,8 @@ import sd2223.trab1.servers.Domain;
 public class JavaFeedsPull extends JavaFeedsCommon<FeedsPull> implements FeedsPull {
     private static final long FEEDS_CACHE_EXPIRATION = 3000;
 
-    public JavaFeedsPull() {
-        super(new JavaFeedsPullPreconditions());
+    public JavaFeedsPull(String secret) {
+        super(new JavaFeedsPullPreconditions(), secret);
     }
 
     final LoadingCache<FeedInfoKey, Result<List<Message>>> cache = CacheBuilder.newBuilder()

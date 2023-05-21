@@ -136,5 +136,5 @@ public interface FeedsService {
 	
 	@DELETE
 	@Path("/personal/{" + USER + "}")
-	void deleteUserFeed(@PathParam(USER) String user);
+	void deleteUserFeed(@PathParam(USER) String user, @QueryParam(PWD) String secret);
 }

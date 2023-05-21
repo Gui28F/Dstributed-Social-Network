@@ -10,8 +10,8 @@ import sd2223.trab1.servers.java.JavaFeedsPush;
 @WebService(serviceName=FeedsService.NAME, targetNamespace=FeedsService.NAMESPACE, endpointInterface=FeedsService.INTERFACE, portName="caca")
 public class SoapFeedsPushWebService extends SoapFeedsWebService<FeedsPush> implements FeedsService {
 
-	public SoapFeedsPushWebService() {
-		super( new JavaFeedsPush() );
+	public SoapFeedsPushWebService(String secret) {
+		super( new JavaFeedsPush(secret) );
 	}
 
 	@Override

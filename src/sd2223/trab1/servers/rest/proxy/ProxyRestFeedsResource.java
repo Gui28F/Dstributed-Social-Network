@@ -53,7 +53,7 @@ public class ProxyRestFeedsResource extends RestResource implements FeedsService
     }
 
     @Override
-    public void deleteUserFeed(String user) {
-        super.fromJavaResult(impl.deleteUserFeed(user));
+    public void deleteUserFeed(String user, String secret) {
+        super.fromJavaResult(impl.deleteUserFeed(user, secret));
     }
 }

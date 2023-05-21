@@ -47,8 +47,8 @@ public class SoapFeedsClient<T extends FeedsService> extends SoapClient implemen
 	}	
 
 	@Override
-	public Result<Void> deleteUserFeed(String user) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().deleteUserFeed(user) ) );
+	public Result<Void> deleteUserFeed(String user, String secret) {
+		return super.reTry( () -> super.toJavaResult( () -> stub().deleteUserFeed(user, secret) ) );
 	}
 
 	@Override

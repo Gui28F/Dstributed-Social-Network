@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import sd2223.trab1.api.java.Users;
 import sd2223.trab1.servers.Domain;
+import utils.Args;
 
 
 public class RestUsersServer extends AbstractRestServer {
@@ -20,7 +21,8 @@ public class RestUsersServer extends AbstractRestServer {
 	
 	@Override
     protected void registerResources(ResourceConfig config) {
-		config.register( RestUsersResource.class ); 
+		String secret = Args.valueOf("-secret", "EMPTY");
+		config.register( new RestUsersResource(secret));
 //		config.register(new GenericExceptionMapper());
 //		config.register(new CustomLoggingFilter());
 	}

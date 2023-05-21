@@ -25,8 +25,8 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     final Map<Long, Set<String>> msgs2users = new ConcurrentHashMap<>();
 
-    public JavaFeedsPush() {
-        super(new JavaFeedsPushPreconditions());
+    public JavaFeedsPush(String secret) {
+        super(new JavaFeedsPushPreconditions(), secret);
     }
 
     @Override
@@ -77,10 +77,10 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var preconditionsResult = preconditions.getMessages(user, time);
         //TODO
         if (!preconditionsResult.isOK())
-			if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-				return Result.ok(preconditionsResult.value());
-			else
-				return preconditionsResult;
+            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
+                return Result.ok(preconditionsResult.value());
+            else
+                return preconditionsResult;
 
         return ok(super.getTimeFilteredPersonalFeed(user, time));
     }

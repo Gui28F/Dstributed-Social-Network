@@ -11,40 +11,41 @@ import sd2223.trab1.api.soap.UsersException;
 import sd2223.trab1.api.soap.UsersService;
 import sd2223.trab1.servers.java.JavaUsers;
 
-@WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
+@WebService(serviceName = UsersService.NAME, targetNamespace = UsersService.NAMESPACE, endpointInterface = UsersService.INTERFACE)
 public class SoapUsersWebService extends SoapWebService<UsersException> implements UsersService {
 
-	static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
-	
-	final Users impl;
-	public SoapUsersWebService() {
-		super( (result)-> new UsersException( result.error().toString()));
-		this.impl = new JavaUsers();
-	}
+    static Logger Log = Logger.getLogger(SoapUsersWebService.class.getName());
 
-	@Override
-	public String createUser(User user) throws UsersException {
-		return super.fromJavaResult( impl.createUser(user));
-	}
+    final Users impl;
 
-	@Override
-	public User getUser(String name, String pwd) throws UsersException {
-		return super.fromJavaResult( impl.getUser(name, pwd));
-	}
-	
-	@Override
-	public User updateUser(String name, String pwd, User user) throws UsersException {
-		return super.fromJavaResult( impl.updateUser(name, pwd, user));
-	}
+    public SoapUsersWebService(String secret) {
+        super((result) -> new UsersException(result.error().toString()));
+        this.impl = new JavaUsers(secret);
+    }
 
-	@Override
-	public User deleteUser(String name, String pwd) throws UsersException {
-		return super.fromJavaResult( impl.deleteUser(name, pwd));
-	}
+    @Override
+    public String createUser(User user) throws UsersException {
+        return super.fromJavaResult(impl.createUser(user));
+    }
 
-	@Override
-	public List<User> searchUsers(String pattern) throws UsersException {
-		return super.fromJavaResult( impl.searchUsers(pattern));
-	}
+    @Override
+    public User getUser(String name, String pwd) throws UsersException {
+        return super.fromJavaResult(impl.getUser(name, pwd));
+    }
+
+    @Override
+    public User updateUser(String name, String pwd, User user) throws UsersException {
+        return super.fromJavaResult(impl.updateUser(name, pwd, user));
+    }
+
+    @Override
+    public User deleteUser(String name, String pwd) throws UsersException {
+        return super.fromJavaResult(impl.deleteUser(name, pwd));
+    }
+
+    @Override
+    public List<User> searchUsers(String pattern) throws UsersException {
+        return super.fromJavaResult(impl.searchUsers(pattern));
+    }
 
 }
