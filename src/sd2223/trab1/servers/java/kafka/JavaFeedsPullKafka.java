@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.FeedsPull;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.servers.Domain;
 import sd2223.trab1.servers.java.JavaFeedsPullPreconditions;
 
@@ -43,6 +44,19 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
 
     @Override
     public Result<Message> getMessage(String user, long mid) {
+        Object[] parameters = {user, mid};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGE, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Message> getMessageKafka(String user, long mid) {
 
         var preconditionsResult = preconditions.getMessage(user, mid);
         //TODO
@@ -71,6 +85,19 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
+        Object[] parameters = {user, time};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGES, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<List<Message>> getMessagesKafka(String user, long time) {
 
         var preconditionsResult = preconditions.getMessages(user, time);
         //TODO
@@ -118,6 +145,19 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
 
     @Override
     protected void deleteFromUserFeed(String user, Set<Long> mids) {
+
+        Object[] parameters = {user, mids};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.DELETE_FROM_USER_FEED, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
+    protected void deleteFromUserFeedKafka(String user, Set<Long> mids) {
         messages.keySet().removeAll(mids);
     }
 

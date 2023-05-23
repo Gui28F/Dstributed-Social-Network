@@ -1,4 +1,4 @@
-package aula10.kafka.sync;
+package sd2223.trab1.kafka.sync;
 
 import java.util.HashMap;
 import java.util.Map;

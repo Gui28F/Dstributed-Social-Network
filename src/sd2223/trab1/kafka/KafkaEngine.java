@@ -16,19 +16,18 @@ public class KafkaEngine {
     public static final String PULL_GET_TIME_FILTERED_PERSONAL_FEED = "pull_getTimeFilteredPersonalFeedKafka";
     public static final String PUSH_PUSH_MESSAGE = "push_PushMessageKafka";
     public static final String PUSH_UPDATE_FOLLOWERS = "push_updateFollowersKafka";
+    public static final String DELETE_FROM_USER_FEED = "deleteFromUserFeedKafka";
     private KafkaPublisher publisher;
-    private KafkaSubscriber subscriber;
-
     private static final String FROM_BEGINNING = "earliest";
     private static final String KAFKA_BROKERS = "kafka:9092";
     private String[] topics = {POST_MESSAGE, REMOVE_FROM_PERSONAL_FEED, GET_MESSAGE, GET_MESSAGES, SUB_USER, UNSUBSCRIBE_USER,
-            LIST_SUBS, DELETE_USER_FEED, PULL_GET_TIME_FILTERED_PERSONAL_FEED, PUSH_PUSH_MESSAGE, PUSH_UPDATE_FOLLOWERS};
+            LIST_SUBS, DELETE_USER_FEED, PULL_GET_TIME_FILTERED_PERSONAL_FEED, PUSH_PUSH_MESSAGE, PUSH_UPDATE_FOLLOWERS,
+            DELETE_FROM_USER_FEED};
 
     private static KafkaEngine impl;
 
     private KafkaEngine() {
         this.publisher = KafkaPublisher.createPublisher(KAFKA_BROKERS);
-        this.subscriber = KafkaSubscriber.createSubscriber(KAFKA_BROKERS, Arrays.stream(topics).toList(), FROM_BEGINNING);
     }
 
     public static KafkaEngine getInstance() {

@@ -30,9 +30,9 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     private String secret;
 
-    private Map<Long, Result> resultMap;
+    protected Map<Long, Result> resultMap;
     protected KafkaSubscriber subscriber;
-    private Version version;
+    protected Version version;
 
     protected FeedsCommonKafka(T preconditions, String secret) {
         this.preconditions = preconditions;
@@ -52,7 +52,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
         }
     }
 
-    private void startSubscriber() {
+    private void startSubscriber() {//TODO NAO PODE ESTAR AQUI SE NÃO VAI CONSEGUIR IR BUSCAR OS METODOS DAS SUBCLASSES
         subscriber.start(true, (r) -> {
             System.out.printf("SeqN: %s %d %s\n", r.topic(), r.offset(), Arrays.toString(r.value()));
             try {
@@ -105,7 +105,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
 
         Object[] parameters = {user, mid, pwd};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.POST_MESSAGE, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.REMOVE_FROM_PERSONAL_FEED, parameters);
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -147,6 +147,20 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
+        Object[] parameters = {user, userSub, pwd};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.SUB_USER, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Void> subUserKafka(String user, String userSub, String pwd) {
 
         var preconditionsResult = preconditions.subUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
@@ -162,6 +176,20 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
+        Object[] parameters = {user, userSub, pwd};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.UNSUBSCRIBE_USER, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Void> unsubscribeUserKafka(String user, String userSub, String pwd) {
 
         var preconditionsResult = preconditions.unsubscribeUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
@@ -176,6 +204,20 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<List<String>> listSubs(String user) {
+        Object[] parameters = {user};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.LIST_SUBS, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<List<String>> listSubsKafka(String user) {
 
         var preconditionsResult = preconditions.listSubs(user);
         if (!preconditionsResult.isOK())
@@ -189,6 +231,20 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> deleteUserFeed(String user, String secret) {
+        Object[] parameters = {user, secret};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.DELETE_USER_FEED, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Void> deleteUserFeedKafka(String user, String secret) {
         if (!secret.equals(this.secret))
             return error(FORBIDDEN);
         var preconditionsResult = preconditions.deleteUserFeed(user, secret);

@@ -1,9 +1,9 @@
 package sd2223.trab1.kafka;
 
-import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,10 +20,9 @@ public class KafkaPublisher {
         // Classe para serializar as chaves dos eventos (string)
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        // Classe para serializar os valores dos eventos (string)
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-        return new KafkaPublisher(new KafkaProducer<>(props));
+        // Classe para serializar os valores dos eventos (Object)
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ObjectArraySerializer.class.getName());
+        return new KafkaPublisher(new KafkaProducer<String, Object[]>(props));
     }
 
     private final KafkaProducer<String, Object[]> producer;
