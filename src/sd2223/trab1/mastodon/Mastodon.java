@@ -66,20 +66,21 @@ public class Mastodon implements Feeds {
 
     private static Mastodon impl;
 
-    protected Mastodon() {
+    protected Mastodon(boolean saveState) {
         try {
             service = new ServiceBuilder(clientKey).apiSecret(clientSecret).build(MastodonApi.instance());
             accessToken = new OAuth2AccessToken(accessTokenStr);
-            //  cleanStatus();
+            if (saveState)
+                cleanStatus();
         } catch (Exception x) {
             x.printStackTrace();
             System.exit(0);
         }
     }
 
-    synchronized public static Mastodon getInstance() {
+    synchronized public static Mastodon getInstance(boolean saveState) {
         if (impl == null) {
-            impl = new Mastodon();
+            impl = new Mastodon(saveState);
         }
         return impl;
     }
@@ -174,7 +175,6 @@ public class Mastodon implements Feeds {
 
             Response response = service.execute(request);
             if (response.getCode() == HTTP_OK) {
-                System.out.println(response.getBody());
                 PostStatusResult res = JSON.decode(response.getBody(), new TypeToken<PostStatusResult>() {
                 });
                 //Message msg = res.toMessage();

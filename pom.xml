@@ -109,5 +109,10 @@
             <artifactId>scribejava-apis</artifactId>
             <version>8.3.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
 </project>

@@ -12,59 +12,60 @@ import jakarta.ws.rs.core.Response;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
+import sd2223.trab1.api.rest.FeedsService;
 import sd2223.trab1.api.rest.UsersService;
 
 
 public class RestUsersClient extends RestClient implements Users {
 
-	final WebTarget target;
-	
-	public RestUsersClient( String serverURI ) {
-		super( serverURI );
-		target = client.target( serverURI ).path( UsersService.PATH );
-	}
-	
-	private Result<User> clt_getUser(String name, String pwd) {
+    final WebTarget target;
 
-		Response r = target.path( name )
-				.queryParam(UsersService.PWD, pwd).request()
-				.accept(MediaType.APPLICATION_JSON)
-				.get();
+    public RestUsersClient(String serverURI) {
+        super(serverURI);
+        target = client.target(serverURI).path(UsersService.PATH);
+    }
 
-		return super.toJavaResult(r, User.class);
-	}
+    private Result<User> clt_getUser(String name, String pwd) {
 
-	private Result<String> clt_createUser(User user) {
-		Response r = target
-				.request()
-				.accept(MediaType.APPLICATION_JSON)
-				.post(Entity.entity( user, MediaType.APPLICATION_JSON));
+        Response r = target.path(name)
+                .queryParam(UsersService.PWD, pwd).request()
+                .accept(MediaType.APPLICATION_JSON)
+                .get();
 
-		return super.toJavaResult(r, String.class);
-	}
-	
-	@Override
-	public Result<User> getUser(String name, String pwd) {
-		return super.reTry(() -> clt_getUser(name, pwd));
-	}
-	
-	@Override
-	public Result<String> createUser(User user) {
-		return error(NOT_IMPLEMENTED);
-	}
-	
-	@Override
-	public Result<User> updateUser(String userId, String password, User user) {
-		return error(NOT_IMPLEMENTED);
-	}
+        return super.toJavaResult(r, User.class);
+    }
 
-	@Override
-	public Result<User> deleteUser(String userId, String password) {
-		return error(NOT_IMPLEMENTED);
-	}
+    private Result<String> clt_createUser(User user) {
+        Response r = target
+                .request()
+                .accept(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(user, MediaType.APPLICATION_JSON));
 
-	@Override
-	public Result<List<User>> searchUsers(String pattern) {
-		return error(NOT_IMPLEMENTED);
-	}	
+        return super.toJavaResult(r, String.class);
+    }
+
+    @Override
+    public Result<User> getUser(String name, String pwd) {
+        return super.reTry(() -> clt_getUser(name, pwd));
+    }
+
+    @Override
+    public Result<String> createUser(User user) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<User> updateUser(String userId, String password, User user) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<User> deleteUser(String userId, String password) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<List<User>> searchUsers(String pattern) {
+        return error(NOT_IMPLEMENTED);
+    }
 }

@@ -14,20 +14,20 @@ public class ProxyFeedsServer extends AbstractRestServer {
     public static final int PORT = 5567;
 
     private static Logger Log = Logger.getLogger(ProxyFeedsServer.class.getName());
-
+    private static boolean saveState;
     ProxyFeedsServer() {
         super(Log, Feeds.SERVICENAME, PORT);
     }
 
     @Override
     protected void registerResources(ResourceConfig config) {
-        config.register(ProxyRestFeedsResource.class);
+        config.register(new ProxyRestFeedsResource(saveState));
     }
 
     public static void main(String[] args) throws Exception {
         Args.use(args);
         Domain.set(args[0], Long.valueOf(args[1]));
-        //TODO como é que passamos e usamos a flag the true ou false do enunciado para manter ou limpar o estado?
+        saveState = Boolean.parseBoolean(args[2]);
         new ProxyFeedsServer().start();
     }
 }

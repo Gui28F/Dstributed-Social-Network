@@ -1,19 +1,18 @@
-package sd2223.trab1.servers.java;
+package sd2223.trab1.servers.java.kafka;
 
 import static sd2223.trab1.api.java.Result.ErrorCode.FORBIDDEN;
 import static sd2223.trab1.api.java.Result.error;
 import static sd2223.trab1.api.java.Result.ok;
 import static sd2223.trab1.api.java.Result.ErrorCode.NOT_FOUND;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
@@ -21,7 +20,8 @@ import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.kafka.KafkaSubscriber;
 import sd2223.trab1.servers.Domain;
 
-public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
+@SuppressWarnings("unchecked")
+public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
     private static final long FEEDS_MID_PREFIX = 1_000_000_000;
 
     protected AtomicLong serial = new AtomicLong(Domain.uuid() * FEEDS_MID_PREFIX);
@@ -30,9 +30,17 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     private String secret;
 
-    protected JavaFeedsCommon(T preconditions, String secret) {
+    private Map<Long, Result> resultMap;
+    protected KafkaSubscriber subscriber;
+    private Version version;
+
+    protected FeedsCommonKafka(T preconditions, String secret) {
         this.preconditions = preconditions;
         this.secret = secret;
+        this.resultMap = new HashMap<>();
+        this.version = new Version();
+        this.subscriber = KafkaEngine.getInstance().createSubscriber();
+        this.startSubscriber();
     }
 
     protected Map<Long, Message> messages = new ConcurrentHashMap<>();
@@ -44,8 +52,39 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
         }
     }
 
+    private void startSubscriber() {
+        subscriber.start(true, (r) -> {
+            System.out.printf("SeqN: %s %d %s\n", r.topic(), r.offset(), Arrays.toString(r.value()));
+            try {
+                Method method = this.getClass().getDeclaredMethod(r.topic());
+                Object[] parameters = r.value();
+                Object obj = this.getClass().getDeclaredConstructor();
+                method.invoke(obj, parameters);
+
+            } catch (NoSuchMethodException e) {
+
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     @Override
     public Result<Long> postMessage(String user, String pwd, Message msg) {
+        Object[] parameters = {user, pwd, msg};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.POST_MESSAGE, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Long> postMessageKafka(String user, String pwd, Message msg) {
         var preconditionsResult = preconditions.postMessage(user, pwd, msg);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
@@ -64,6 +103,21 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
+
+        Object[] parameters = {user, mid, pwd};
+        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.POST_MESSAGE, parameters);
+        synchronized (version) {
+            try {
+                while (version.getVersion() < nSeq)
+                    version.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
+        return resultMap.get(nSeq);
+    }
+
+    public Result<Void> removeFromPersonalFeedKafka(String user, long mid, String pwd) {
 
         var preconditionsResult = preconditions.removeFromPersonalFeed(user, mid, pwd);
         if (!preconditionsResult.isOK())
