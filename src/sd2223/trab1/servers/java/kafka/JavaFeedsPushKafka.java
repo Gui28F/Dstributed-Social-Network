@@ -6,6 +6,7 @@ import sd2223.trab1.api.Message;
 import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.kafka.Function;
 import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.servers.java.JavaFeedsPushPreconditions;
 
@@ -37,13 +38,13 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<Long> postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.POST_MESSAGE, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.POST_MESSAGE, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
                     version.wait();
             } catch (InterruptedException e) {
-
+                e.printStackTrace();
             }
         }
         return resultMap.get(nSeq);
@@ -72,7 +73,7 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<Message> getMessage(String user, long mid) {
         Object[] parameters = {user, mid};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGE, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGE, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -108,7 +109,7 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         Object[] parameters = {user, time};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGES, parameters);
+        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGES, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -135,7 +136,7 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<Void> push_updateFollowers(String user, String follower, boolean following) {
         Object[] parameters = {user, follower, following};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.PUSH_UPDATE_FOLLOWERS, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.PUSH_UPDATE_FOLLOWERS, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -166,7 +167,7 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<Void> push_PushMessage(PushMessage pm) {
         Object[] parameters = {pm};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.PUSH_PUSH_MESSAGE, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.PUSH_PUSH_MESSAGE, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -192,7 +193,7 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     protected void deleteFromUserFeed(String user, Set<Long> mids) {
         Object[] parameters = {user, mids};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.DELETE_FROM_USER_FEED, parameters);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.DELETE_FROM_USER_FEED, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)

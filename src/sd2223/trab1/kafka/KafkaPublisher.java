@@ -3,7 +3,6 @@ package sd2223.trab1.kafka;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -21,13 +20,13 @@ public class KafkaPublisher {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         // Classe para serializar os valores dos eventos (Object)
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ObjectArraySerializer.class.getName());
-        return new KafkaPublisher(new KafkaProducer<String, Object[]>(props));
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, FunctionSerializer.class.getName());
+        return new KafkaPublisher(new KafkaProducer<String, Function>(props));
     }
 
-    private final KafkaProducer<String, Object[]> producer;
+    private final KafkaProducer<String, Function> producer;
 
-    private KafkaPublisher(KafkaProducer<String, Object[]> producer) {
+    private KafkaPublisher(KafkaProducer<String, Function> producer) {
         this.producer = producer;
     }
 
@@ -35,7 +34,7 @@ public class KafkaPublisher {
         this.producer.close();
     }
 
-    public long publish(String topic, String key, Object[] value) {
+    public long publish(String topic, String key, Function value) {
         try {
             return producer.send(new ProducerRecord<>(topic, key, value)).get().offset();
         } catch (ExecutionException | InterruptedException x) {
@@ -44,7 +43,7 @@ public class KafkaPublisher {
         return -1;
     }
 
-    public long publish(String topic, Object[] value) {
+    public long publish(String topic, Function value) {
         try {
             return producer.send(new ProducerRecord<>(topic, value)).get().offset();
         } catch (ExecutionException | InterruptedException x) {

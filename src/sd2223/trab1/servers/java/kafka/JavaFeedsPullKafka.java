@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.FeedsPull;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.kafka.Function;
 import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.servers.Domain;
 import sd2223.trab1.servers.java.JavaFeedsPullPreconditions;
@@ -45,7 +46,7 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
     @Override
     public Result<Message> getMessage(String user, long mid) {
         Object[] parameters = {user, mid};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGE, parameters);
+        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGE, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -86,7 +87,7 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         Object[] parameters = {user, time};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.GET_MESSAGES, parameters);
+        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGES, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)
@@ -147,7 +148,7 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
     protected void deleteFromUserFeed(String user, Set<Long> mids) {
 
         Object[] parameters = {user, mids};
-        Long nSeq = KafkaEngine.getInstance().send(KafkaEngine.DELETE_FROM_USER_FEED, parameters);
+        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.DELETE_FROM_USER_FEED, parameters));
         synchronized (version) {
             try {
                 while (version.getVersion() < nSeq)

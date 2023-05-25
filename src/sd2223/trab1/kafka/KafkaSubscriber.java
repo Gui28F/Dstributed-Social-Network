@@ -26,7 +26,7 @@ public class KafkaSubscriber {
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
 		// Classe para serializar os valores dos eventos (string)
-		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, FunctionDeserializer.class.getName());
 
 		// Cria um consumidor (assinante/subscriber)
 		return new KafkaSubscriber(new KafkaConsumer<>(props), topics);
@@ -34,9 +34,9 @@ public class KafkaSubscriber {
 
 	private static final long POLL_TIMEOUT = 1L;
 
-	final KafkaConsumer<String, Object[]> consumer;
+	final KafkaConsumer<String, Function> consumer;
 
-	public KafkaSubscriber(KafkaConsumer<String, Object[]> consumer, List<String> topics) {
+	public KafkaSubscriber(KafkaConsumer<String, Function> consumer, List<String> topics) {
 		this.consumer = consumer;
 		this.consumer.subscribe(topics);
 	}
