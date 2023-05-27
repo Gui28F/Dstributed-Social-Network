@@ -137,15 +137,12 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     @Override
     public Result<Void> push_PushMessage(PushMessage pm) {
         var msg = pm.getMessage();
-        System.out.println(msg);
         super.messages.put(msg.getId(), msg);
 
         for (var s : pm.getSubscribers()) {
             feeds.computeIfAbsent(s, FeedInfo::new).messages().add(msg.getId());
-            System.out.println(feeds);
         }
         msgs2users.computeIfAbsent(msg.getId(), (k) -> ConcurrentHashMap.newKeySet()).addAll(pm.getSubscribers());
-        System.out.println(msgs2users);
         return ok();
     }
 
