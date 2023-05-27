@@ -20,6 +20,7 @@ import sd2223.trab1.api.java.Result;
 import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.kafka.KafkaSubscriber;
 import sd2223.trab1.servers.Domain;
+import sd2223.trab1.servers.java.kafka.FeedsCommonKafka;
 
 public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
     private static final long FEEDS_MID_PREFIX = 1_000_000_000;
@@ -93,12 +94,9 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
-
         var preconditionsResult = preconditions.subUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-
-
         var ufi = feeds.computeIfAbsent(user, FeedInfo::new);
         synchronized (ufi.user()) {
             ufi.following().add(userSub);

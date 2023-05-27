@@ -61,7 +61,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds, Record
             var version = r.offset();
             sync.setResult(version, (Result) res);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -127,15 +127,15 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds, Record
 
     @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
-        var preconditionsResult = preconditions.subUser(user, userSub, pwd);
-        if (!preconditionsResult.isOK())
-            return preconditionsResult;
         Object[] parameters = {user, userSub, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.SUB_USER, parameters));
         return (Result<Void>) sync.waitForResult(nSeq);
     }
 
     public Result<Void> subUserKafka(String user, String userSub, String pwd) {
+        var preconditionsResult = preconditions.subUser(user, userSub, pwd);
+        if (!preconditionsResult.isOK())
+            return preconditionsResult;
         var ufi = feeds.computeIfAbsent(user, FeedInfo::new);
         synchronized (ufi.user()) {
             ufi.following().add(userSub);

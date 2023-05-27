@@ -18,6 +18,8 @@ import sd2223.trab1.api.Message;
 import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.servers.Domain;
+import sd2223.trab1.servers.java.kafka.FeedsCommonKafka;
 
 public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPush {
 
@@ -35,14 +37,16 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         if (res.isOK()) {
             var followees = feeds.get(user).followees();
             var subscribers = followees.stream()
-                    .map(FeedUser::from)
-                    .collect(Collectors.groupingBy(FeedUser::domain, Collectors.mapping(FeedUser::user, Collectors.toSet())));
-
+                    .map(FeedsCommonKafka.FeedUser::from)
+                    .collect(Collectors.groupingBy(FeedsCommonKafka.FeedUser::domain, Collectors.mapping(FeedsCommonKafka.FeedUser::user, Collectors.toSet())));
             scheduler.execute(() -> {
                 for (var e : subscribers.entrySet()) {
                     var domain = e.getKey();
                     var users = e.getValue();
-                    while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
+                    if (domain.equals(Domain.get()))
+                        while (!push_PushMessage(new PushMessage(users, msg)).isOK()) ;
+                    else
+                        while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
                 }
             });
         }
@@ -67,6 +71,26 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         }
     }
 
+    @Override
+    public Result<Void> subUser(String user, String userSub, String pwd) {
+        var preconditionsResult = preconditions.subUser(user, userSub, pwd);
+        if (!preconditionsResult.isOK())
+            return preconditionsResult;
+        var u2 = JavaFeedsCommon.FeedUser.from(userSub);
+        Result<Void> ures2;
+        if (u2.domain().equals(Domain.get()))
+            ures2 = push_updateFollowers(userSub, user, true);
+        else
+            ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, true);
+        if (ures2.error() == NOT_FOUND)
+            return error(NOT_FOUND);
+
+        var ufi = feeds.computeIfAbsent(user, FeedInfo::new);
+        synchronized (ufi.user()) {
+            ufi.following().add(userSub);
+        }
+        return ok();
+    }
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         var preconditionsResult = preconditions.getMessages(user, time);
