@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResource implements FeedsService, RecordProcessor {
     //TODO ver se temos que repetie
     protected KafkaSubscriber subscriber;
-    protected SyncPoint<Object> sync;
+    protected SyncPoint<Result> sync;
     final protected T impl;
 
     public KafkaRestFeedsResource(T impl) {
@@ -41,7 +41,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
             System.out.println(method);
             var res = method.invoke(this, fun.getParameters());
             var version = r.offset();
-            sync.setResult(version, res);
+            sync.setResult(version, (Result) res);
         } catch (InvocationTargetException | IllegalAccessException e) {
 
         }
@@ -51,23 +51,23 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public long postMessage(Long version, String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.POST_MESSAGE, parameters));
-        return (long) sync.waitForResult(nSeq);
+        return super.fromJavaResult((Result<Long>) sync.waitForResult(nSeq));
 
     }
 
-    public long postMessageKafka(String user, String pwd, Message msg) {
-        return super.fromJavaResult(impl.postMessage(user, pwd, msg));
+    public Result<Long> postMessageKafka(String user, String pwd, Message msg) {
+        return impl.postMessage(user, pwd, msg);
     }
 
     @Override
     public void removeFromPersonalFeed(Long version, String user, long mid, String pwd) {
         Object[] parameters = {user, mid, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.REMOVE_FROM_PERSONAL_FEED, parameters));
-        sync.waitForResult(nSeq);
+        super.fromJavaResult((Result<Void>) sync.waitForResult(nSeq));
     }
 
-    public void removeFromPersonalFeedKafka(String user, long mid, String pwd) {
-        super.fromJavaResult(impl.removeFromPersonalFeed(user, mid, pwd));
+    public Result<Void> removeFromPersonalFeedKafka(String user, long mid, String pwd) {
+        return impl.removeFromPersonalFeed(user, mid, pwd);
     }
 
     @Override
@@ -84,23 +84,23 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public void subUser(Long version, String user, String userSub, String pwd) {
         Object[] parameters = {user, userSub, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.SUB_USER, parameters));
-        sync.waitForResult(nSeq);
+        super.fromJavaResult((Result<Void>) sync.waitForResult(nSeq));
     }
 
-    public void subUserKafka(Long version, String user, String userSub, String pwd) {
-        super.fromJavaResult(impl.subUser(user, userSub, pwd));
+    public Result<Void> subUserKafka(String user, String userSub, String pwd) {
+        return impl.subUser(user, userSub, pwd);
     }
 
     @Override
     public void unsubscribeUser(Long version, String user, String userSub, String pwd) {
         Object[] parameters = {user, userSub, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.UNSUBSCRIBE_USER, parameters));
-        sync.waitForResult(nSeq);
+        super.fromJavaResult((Result<Void>) sync.waitForResult(nSeq));
     }
 
 
-    public void unsubscribeUserKafka(String user, String userSub, String pwd) {
-        super.fromJavaResult(impl.unsubscribeUser(user, userSub, pwd));
+    public Result<Void> unsubscribeUserKafka(String user, String userSub, String pwd) {
+        return impl.unsubscribeUser(user, userSub, pwd);
     }
 
     @Override
@@ -113,10 +113,10 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public void deleteUserFeed(Long version, String user, String secret) {
         Object[] parameters = {user, secret};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.DELETE_USER_FEED, parameters));
-        sync.waitForResult(nSeq);
+        super.fromJavaResult((Result<Void>) sync.waitForResult(nSeq));
     }
 
-    public void deleteUserFeedKafka(Long version, String user, String secret) {
-        super.fromJavaResult(impl.deleteUserFeed(user, secret));
+    public Result<Void> deleteUserFeedKafka(String user, String secret) {
+        return impl.deleteUserFeed(user, secret);
     }
 }

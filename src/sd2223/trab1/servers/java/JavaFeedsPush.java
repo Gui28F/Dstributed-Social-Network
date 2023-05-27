@@ -32,7 +32,6 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
 
     public Result<Long> postMessage(String user, String pwd, Message msg) {
         var res = super.postMessage(user, pwd, msg);
-        System.out.println(res);
         if (res.isOK()) {
             var followees = feeds.get(user).followees();
             var subscribers = followees.stream()
