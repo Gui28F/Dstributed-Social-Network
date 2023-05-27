@@ -37,9 +37,7 @@ public class KafkaEngine {
     }
 
     public long send(Function msg) {
-        System.out.println(1);
         long offset = publisher.publish(TOPIC, msg);
-        System.out.println(2);
         if (offset >= 0)
             System.out.println("Message published with sequence number: " + offset);
         else

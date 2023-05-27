@@ -11,16 +11,19 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.kafka.Function;
 import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.kafka.KafkaSubscriber;
+import sd2223.trab1.kafka.RecordProcessor;
+import sd2223.trab1.kafka.sync.SyncPoint;
 import sd2223.trab1.servers.Domain;
 
 @SuppressWarnings("unchecked")
-public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
+public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds, RecordProcessor {
     private static final long FEEDS_MID_PREFIX = 1_000_000_000;
 
     protected AtomicLong serial = new AtomicLong(Domain.uuid() * FEEDS_MID_PREFIX);
@@ -28,18 +31,15 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
     final protected T preconditions;
 
     private String secret;
-
-    protected Map<Long, Result> resultMap;
     protected KafkaSubscriber subscriber;
-    protected Version version;
+    protected SyncPoint<Result> sync;
 
     protected FeedsCommonKafka(T preconditions, String secret) {
         this.preconditions = preconditions;
         this.secret = secret;
-        this.resultMap = new HashMap<>();
-        this.version = new Version();
         this.subscriber = KafkaEngine.getInstance().createSubscriber();
-        this.startSubscriber();
+        this.sync = new SyncPoint<>();
+        subscriber.start(false, this);
     }
 
     protected Map<Long, Message> messages = new ConcurrentHashMap<>();
@@ -51,41 +51,31 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
         }
     }
 
-    private void startSubscriber() {//TODO NAO PODE ESTAR AQUI SE NÃO VAI CONSEGUIR IR BUSCAR OS METODOS DAS SUBCLASSES
-        new Thread(() -> subscriber.start(true, (r) -> {
-            System.out.printf("SeqN: %s %d \n", r.topic(), r.offset());
-            try {
-                Class[] a = {String.class, String.class, Message.class};
-                Function fun = r.value();
-                Method method = this.getClass().getDeclaredMethod(fun.getFunctionName(), a);
-                Object[] params = fun.getParameters();
-                method.invoke(this, fun.getParameters());
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        })).start();
+    @Override
+    public void onReceive(ConsumerRecord<String, Function> r) {
+        try {
+            Function fun = r.value();
+            Method[] methods = this.getClass().getMethods();
+            Method method = Arrays.stream(methods).filter(f -> f.getName().equals(fun.getFunctionName())).findFirst().orElse(null);
+            var res = method.invoke(this, fun.getParameters());
+            var version = r.offset();
+            sync.setResult(version, (Result) res);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Result<Long> postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.POST_MESSAGE, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Long>) sync.waitForResult(nSeq);
+
     }
 
     public Result<Long> postMessageKafka(String user, String pwd, Message msg) {
         var preconditionsResult = preconditions.postMessage(user, pwd, msg);
-        if (!preconditionsResult.isOK())
+        if( ! preconditionsResult.isOK() )
             return preconditionsResult;
 
         Long mid = serial.incrementAndGet();
@@ -102,18 +92,9 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
-
         Object[] parameters = {user, mid, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.REMOVE_FROM_PERSONAL_FEED, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Void>) sync.waitForResult(nSeq);
     }
 
     public Result<Void> removeFromPersonalFeedKafka(String user, long mid, String pwd) {
@@ -131,7 +112,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
                 return error(NOT_FOUND);
         }
 
-        deleteFromUserFeed(user, Set.of(mid));
+        deleteFromUserFeedKafka(user, Set.of(mid));
 
         return ok();
     }
@@ -146,26 +127,15 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
-        Object[] parameters = {user, userSub, pwd};
-        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.SUB_USER, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
-    }
-
-    public Result<Void> subUserKafka(String user, String userSub, String pwd) {
-
         var preconditionsResult = preconditions.subUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
+        Object[] parameters = {user, userSub, pwd};
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.SUB_USER, parameters));
+        return (Result<Void>) sync.waitForResult(nSeq);
+    }
 
-
+    public Result<Void> subUserKafka(String user, String userSub, String pwd) {
         var ufi = feeds.computeIfAbsent(user, FeedInfo::new);
         synchronized (ufi.user()) {
             ufi.following().add(userSub);
@@ -177,15 +147,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
     public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
         Object[] parameters = {user, userSub, pwd};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.UNSUBSCRIBE_USER, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Void>) sync.waitForResult(nSeq);
     }
 
     public Result<Void> unsubscribeUserKafka(String user, String userSub, String pwd) {
@@ -201,22 +163,14 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
         return ok();
     }
 
-    @Override
+    /*@Override
     public Result<List<String>> listSubs(String user) {
         Object[] parameters = {user};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.LIST_SUBS, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
-    }
-
-    public Result<List<String>> listSubsKafka(String user) {
+        return (Result<List<String>>) sync.waitForResult(nSeq);
+    }*/
+    @Override
+    public Result<List<String>> listSubs(String user) {
 
         var preconditionsResult = preconditions.listSubs(user);
         if (!preconditionsResult.isOK())
@@ -232,15 +186,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
     public Result<Void> deleteUserFeed(String user, String secret) {
         Object[] parameters = {user, secret};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.DELETE_USER_FEED, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Void>) sync.waitForResult(nSeq);
     }
 
     public Result<Void> deleteUserFeedKafka(String user, String secret) {
@@ -255,7 +201,7 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
             return error(NOT_FOUND);
 
         synchronized (ufi.user()) {
-            deleteFromUserFeed(user, ufi.messages());
+            deleteFromUserFeedKafka(user, ufi.messages());
             for (var u : ufi.followees())
                 ufi.following().remove(u);
         }
@@ -287,5 +233,5 @@ public abstract class FeedsCommonKafka<T extends Feeds> implements Feeds {
 
     }
 
-    abstract protected void deleteFromUserFeed(String user, Set<Long> mids);
+    abstract protected void deleteFromUserFeedKafka(String user, Set<Long> mids);
 }

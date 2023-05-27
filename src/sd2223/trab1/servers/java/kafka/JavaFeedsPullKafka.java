@@ -46,26 +46,15 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
     @Override
     public Result<Message> getMessage(String user, long mid) {
         Object[] parameters = {user, mid};
-        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGE, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-            }
-        }
-        return resultMap.get(nSeq);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGE, parameters));
+        return (Result<Message>) sync.waitForResult(nSeq);
     }
 
     public Result<Message> getMessageKafka(String user, long mid) {
 
         var preconditionsResult = preconditions.getMessage(user, mid);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         FeedInfo ufi = feeds.get(user);
         if (ufi == null)
@@ -87,26 +76,15 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         Object[] parameters = {user, time};
-        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGES, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-            }
-        }
-        return resultMap.get(nSeq);
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGES, parameters));
+        return (Result<List<Message>>) sync.waitForResult(nSeq);
     }
 
     public Result<List<Message>> getMessagesKafka(String user, long time) {
 
         var preconditionsResult = preconditions.getMessages(user, time);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         FeedInfo ufi = feeds.get(user);
         if (ufi == null)
@@ -144,20 +122,15 @@ public class JavaFeedsPullKafka extends FeedsCommonKafka<FeedsPull> implements F
         return Collections.emptyList();
     }
 
-    @Override
+
     protected void deleteFromUserFeed(String user, Set<Long> mids) {
 
         Object[] parameters = {user, mids};
-        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.DELETE_FROM_USER_FEED, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-            }
-        }
+        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.DELETE_FROM_USER_FEED, parameters));
+        sync.waitForResult(nSeq);
     }
 
+    @Override
     protected void deleteFromUserFeedKafka(String user, Set<Long> mids) {
         messages.keySet().removeAll(mids);
     }

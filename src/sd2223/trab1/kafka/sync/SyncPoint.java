@@ -28,6 +28,7 @@ public class SyncPoint<T> {
 			try {
 				this.wait(waitPeriod);
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}

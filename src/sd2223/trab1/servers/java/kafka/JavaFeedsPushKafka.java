@@ -8,6 +8,7 @@ import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.kafka.Function;
 import sd2223.trab1.kafka.KafkaEngine;
+import sd2223.trab1.servers.Domain;
 import sd2223.trab1.servers.java.JavaFeedsPushPreconditions;
 
 import java.lang.reflect.Method;
@@ -39,60 +40,42 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
     public Result<Long> postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.POST_MESSAGE, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Long>) sync.waitForResult(nSeq);
     }
 
     public Result<Long> postMessageKafka(String user, String pwd, Message msg) {
-        var res = super.postMessage(user, pwd, msg);
+        var res = super.postMessageKafka(user, pwd, msg);
         if (res.isOK()) {
             var followees = feeds.get(user).followees();
-
             var subscribers = followees.stream()
                     .map(FeedUser::from)
                     .collect(Collectors.groupingBy(FeedUser::domain, Collectors.mapping(FeedUser::user, Collectors.toSet())));
-
             scheduler.execute(() -> {
                 for (var e : subscribers.entrySet()) {
                     var domain = e.getKey();
                     var users = e.getValue();
-                    while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
+                    if (domain.equals(Domain.get()))
+                        while (!push_PushMessage(new PushMessage(users, msg)).isOK()) ;
+                    else
+                        while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
                 }
             });
         }
         return res;
     }
 
+    /**
+     * @Override public Result<Message> getMessage(String user, long mid) {
+     * Object[] parameters = {user, mid};
+     * Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGE, parameters));
+     * return (Result<Message>) sync.waitForResult(nSeq);
+     * }
+     */
     @Override
     public Result<Message> getMessage(String user, long mid) {
-        Object[] parameters = {user, mid};
-        Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGE, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
-    }
-
-    public Result<Message> getMessageKafka(String user, long mid) {
         var preconditionsResult = preconditions.getMessage(user, mid);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         var ufi = feeds.get(user);
         if (ufi == null)
@@ -106,48 +89,29 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
         }
     }
 
+    /**
+     * @Override public Result<List<Message>> getMessages(String user, long time) {
+     * Object[] parameters = {user, time};
+     * Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.GET_MESSAGES, parameters));
+     * return (Result<List<Message>>) sync.waitForResult(nSeq);
+     * }
+     */
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
-        Object[] parameters = {user, time};
-        Long nSeq = KafkaEngine.getInstance().send( new Function(KafkaEngine.GET_MESSAGES, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
-    }
-
-    public Result<List<Message>> getMessagesKafka(String user, long time) {
         var preconditionsResult = preconditions.getMessages(user, time);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         return ok(super.getTimeFilteredPersonalFeed(user, time));
     }
+
 
     @Override
     public Result<Void> push_updateFollowers(String user, String follower, boolean following) {
         Object[] parameters = {user, follower, following};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.PUSH_UPDATE_FOLLOWERS, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
+        return (Result<Void>) sync.waitForResult(nSeq);
     }
-
 
     public Result<Void> push_updateFollowersKafka(String user, String follower, boolean following) {
         var preconditionsResult = preconditions.push_updateFollowers(user, follower, following);
@@ -160,50 +124,39 @@ public class JavaFeedsPushKafka extends FeedsCommonKafka<FeedsPush> implements F
             followees.add(follower);
         else
             followees.remove(follower);
-
         return ok();
     }
 
-    @Override
+    /*@Override
     public Result<Void> push_PushMessage(PushMessage pm) {
+        System.out.println("pm push "+ pm);
         Object[] parameters = {pm};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.PUSH_PUSH_MESSAGE, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-        return resultMap.get(nSeq);
-    }
-
-    public Result<Void> push_PushMessageKafka(PushMessage pm) {
+        return (Result<Void>) sync.waitForResult(nSeq);
+    }*/
+    @Override
+    public Result<Void> push_PushMessage(PushMessage pm) {
         var msg = pm.getMessage();
+        System.out.println(msg);
         super.messages.put(msg.getId(), msg);
 
-        for (var s : pm.getSubscribers())
+        for (var s : pm.getSubscribers()) {
             feeds.computeIfAbsent(s, FeedInfo::new).messages().add(msg.getId());
-
+            System.out.println(feeds);
+        }
         msgs2users.computeIfAbsent(msg.getId(), (k) -> ConcurrentHashMap.newKeySet()).addAll(pm.getSubscribers());
+        System.out.println(msgs2users);
         return ok();
     }
 
-    @Override
+
     protected void deleteFromUserFeed(String user, Set<Long> mids) {
         Object[] parameters = {user, mids};
         Long nSeq = KafkaEngine.getInstance().send(new Function(KafkaEngine.DELETE_FROM_USER_FEED, parameters));
-        synchronized (version) {
-            try {
-                while (version.getVersion() < nSeq)
-                    version.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
+        sync.waitForResult(nSeq);
     }
 
+    @Override
     protected void deleteFromUserFeedKafka(String user, Set<Long> mids) {
         for (var mid : mids) {
             var references = msgs2users.get(mid);

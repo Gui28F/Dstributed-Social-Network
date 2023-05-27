@@ -1,10 +1,12 @@
 package sd2223.trab1.api;
 
+import java.io.Serializable;
+
 /**
  * Represents a user in the system. Note: the password of a user should not be
  * returned in any method.
  */
-public class User {
+public class User implements Serializable {
 	private String name;
 	private String pwd;
 	private String displayName;

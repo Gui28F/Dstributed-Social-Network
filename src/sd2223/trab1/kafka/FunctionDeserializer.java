@@ -1,36 +1,33 @@
 package sd2223.trab1.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Map;
 
 public class FunctionDeserializer implements Deserializer<Function> {
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
-        // No additional configuration needed
+        // No additional configuration required
     }
 
     @Override
     public Function deserialize(String topic, byte[] data) {
-        if (data == null) {
-            return null;
-        }
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
 
-        try {
-            return objectMapper.readValue(data, Function.class);
-        } catch (IOException e) {
-            throw new SerializationException("Error deserializing Function: " + e.getMessage(), e);
+            return (Function) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new SerializationException("Error deserializing Function object", e);
         }
     }
 
     @Override
     public void close() {
-        // No resources to close
+        // No resources to release
     }
 }

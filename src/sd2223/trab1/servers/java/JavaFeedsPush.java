@@ -34,7 +34,6 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var res = super.postMessage(user, pwd, msg);
         if (res.isOK()) {
             var followees = feeds.get(user).followees();
-
             var subscribers = followees.stream()
                     .map(FeedUser::from)
                     .collect(Collectors.groupingBy(FeedUser::domain, Collectors.mapping(FeedUser::user, Collectors.toSet())));
@@ -53,12 +52,8 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
     @Override
     public Result<Message> getMessage(String user, long mid) {
         var preconditionsResult = preconditions.getMessage(user, mid);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         var ufi = feeds.get(user);
         if (ufi == null)
@@ -75,12 +70,8 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         var preconditionsResult = preconditions.getMessages(user, time);
-        //TODO
         if (!preconditionsResult.isOK())
-            if (preconditionsResult.error() == Result.ErrorCode.REDIRECTED)
-                return Result.ok(preconditionsResult.value());
-            else
-                return preconditionsResult;
+            return preconditionsResult;
 
         return ok(super.getTimeFilteredPersonalFeed(user, time));
     }

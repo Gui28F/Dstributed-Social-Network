@@ -1,6 +1,8 @@
 package sd2223.trab1.kafka;
 
-public class Function {
+import java.io.Serializable;
+
+public class Function implements Serializable {
     private String functionName;
     private Object[] parameters;
 

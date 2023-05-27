@@ -6,7 +6,6 @@ import sd2223.trab1.servers.Domain;
 import sd2223.trab1.servers.rest.AbstractRestServer;
 import utils.Args;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KafkaRestFeedsServer extends AbstractRestServer {
@@ -27,7 +26,7 @@ public class KafkaRestFeedsServer extends AbstractRestServer {
 
     public static void main(String[] args) throws Exception {
         Args.use(args);
-        Domain.set(args[0], Long.valueOf(args[1]));
+        Domain.set(args[0], 2);
         new KafkaRestFeedsServer().start();
     }
 }
