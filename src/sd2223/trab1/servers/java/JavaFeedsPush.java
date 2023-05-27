@@ -19,7 +19,6 @@ import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.servers.Domain;
-import sd2223.trab1.servers.java.kafka.FeedsCommonKafka;
 
 public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPush {
 
@@ -31,22 +30,23 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         super(new JavaFeedsPushPreconditions(), secret);
     }
 
-    @Override
     public Result<Long> postMessage(String user, String pwd, Message msg) {
         var res = super.postMessage(user, pwd, msg);
+        System.out.println(res);
         if (res.isOK()) {
             var followees = feeds.get(user).followees();
             var subscribers = followees.stream()
-                    .map(FeedsCommonKafka.FeedUser::from)
-                    .collect(Collectors.groupingBy(FeedsCommonKafka.FeedUser::domain, Collectors.mapping(FeedsCommonKafka.FeedUser::user, Collectors.toSet())));
+                    .map(FeedUser::from)
+                    .collect(Collectors.groupingBy(FeedUser::domain, Collectors.mapping(FeedUser::user, Collectors.toSet())));
             scheduler.execute(() -> {
                 for (var e : subscribers.entrySet()) {
                     var domain = e.getKey();
                     var users = e.getValue();
-                    if (domain.equals(Domain.get()))
+                    if (domain.equals(Domain.get())) {
                         while (!push_PushMessage(new PushMessage(users, msg)).isOK()) ;
-                    else
+                    }else {
                         while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
+                    }
                 }
             });
         }

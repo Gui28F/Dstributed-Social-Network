@@ -17,10 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
-import sd2223.trab1.kafka.KafkaEngine;
-import sd2223.trab1.kafka.KafkaSubscriber;
 import sd2223.trab1.servers.Domain;
-import sd2223.trab1.servers.java.kafka.FeedsCommonKafka;
 
 public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
     private static final long FEEDS_MID_PREFIX = 1_000_000_000;

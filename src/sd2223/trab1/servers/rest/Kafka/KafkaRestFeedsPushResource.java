@@ -5,13 +5,12 @@ import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.rest.FeedsServicePush;
 import sd2223.trab1.servers.java.JavaFeedsPush;
-import sd2223.trab1.servers.java.kafka.JavaFeedsPushKafka;
 
 @Singleton
 public class KafkaRestFeedsPushResource extends KafkaRestFeedsResource<FeedsPush> implements FeedsServicePush {
 
     public KafkaRestFeedsPushResource(String secret) {
-        super(new JavaFeedsPushKafka(secret));
+        super(new JavaFeedsPush(secret));
     }
 
     @Override
