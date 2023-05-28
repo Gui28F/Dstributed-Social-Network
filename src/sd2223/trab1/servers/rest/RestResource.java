@@ -23,7 +23,7 @@ public class RestResource {
 	/**
 	 * Translates a Result<T> to a HTTP Status code
 	 */
-	private static Status statusCodeFrom(Result<?> result) {
+	protected static Status statusCodeFrom(Result<?> result) {
 		switch (result.error()) {
 		case CONFLICT:
 			return Status.CONFLICT;

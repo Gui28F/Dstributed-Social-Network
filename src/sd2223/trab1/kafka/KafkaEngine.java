@@ -20,12 +20,13 @@ public class KafkaEngine {
     private KafkaPublisher publisher;
     private static final String FROM_BEGINNING = "earliest";
     private static final String KAFKA_BROKERS = "kafka:9092";
-    private String[] topics = {POST_MESSAGE, REMOVE_FROM_PERSONAL_FEED, GET_MESSAGE, GET_MESSAGES, SUB_USER, UNSUBSCRIBE_USER,
+   /* private String[] topics = {POST_MESSAGE, REMOVE_FROM_PERSONAL_FEED, GET_MESSAGE, GET_MESSAGES, SUB_USER, UNSUBSCRIBE_USER,
             LIST_SUBS, DELETE_USER_FEED, PULL_GET_TIME_FILTERED_PERSONAL_FEED, PUSH_PUSH_MESSAGE, PUSH_UPDATE_FOLLOWERS,
             DELETE_FROM_USER_FEED};
     static final String TOPIC = "topic";
-    private static KafkaEngine impl;
 
+    */
+    private static KafkaEngine impl;
     private KafkaEngine() {
         this.publisher = KafkaPublisher.createPublisher(KAFKA_BROKERS);
     }
@@ -36,20 +37,16 @@ public class KafkaEngine {
         return impl;
     }
 
-    public long send(Function msg) {
-        long offset = publisher.publish(TOPIC, msg);
+    public long send(String topic, Function msg) {
+        long offset = publisher.publish(topic, msg);
         if (offset >= 0)
             System.out.println("Message published with sequence number: " + offset);
         else
             System.err.println("Failed to publish message");
         return offset;
     }
-
-    public KafkaSubscriber createSubscriber() {
-        return KafkaSubscriber.createSubscriber(KAFKA_BROKERS, List.of(TOPIC), FROM_BEGINNING);
-        //subscriber.start(true, (r) -> {
-        //   System.out.printf("SeqN: %s %d %s\n", r.topic(), r.offset(), r.value());
-        //});
+    public KafkaSubscriber createSubscriber(String topic) {
+        return KafkaSubscriber.createSubscriber(KAFKA_BROKERS, List.of(topic), FROM_BEGINNING);
     }
 
 }

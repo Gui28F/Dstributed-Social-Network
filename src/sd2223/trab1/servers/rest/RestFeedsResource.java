@@ -17,12 +17,12 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     final protected T impl;
 
     @Override
-    public long postMessage(Long version, String user, String pwd, Message msg) {
+    public long postMessage(String user, String pwd, Message msg) {
         return super.fromJavaResult(impl.postMessage(user, pwd, msg));
     }
 
     @Override
-    public void removeFromPersonalFeed(Long version, String user, long mid, String pwd) {
+    public void removeFromPersonalFeed(String user, long mid, String pwd) {
         super.fromJavaResult(impl.removeFromPersonalFeed(user, mid, pwd));
     }
 
@@ -37,12 +37,12 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     }
 
     @Override
-    public void subUser(Long version, String user, String userSub, String pwd) {
+    public void subUser(String user, String userSub, String pwd) {
         super.fromJavaResult(impl.subUser(user, userSub, pwd));
     }
 
     @Override
-    public void unsubscribeUser(Long version, String user, String userSub, String pwd) {
+    public void unsubscribeUser(String user, String userSub, String pwd) {
         super.fromJavaResult(impl.unsubscribeUser(user, userSub, pwd));
     }
 
@@ -52,7 +52,7 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     }
 
     @Override
-    public void deleteUserFeed(Long version, String user, String secret) {
+    public void deleteUserFeed(String user, String secret) {
         super.fromJavaResult(impl.deleteUserFeed(user, secret));
     }
 }

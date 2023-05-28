@@ -6,6 +6,7 @@ import java.util.Map;
 public class SyncPoint<T> {
 	private static SyncPoint<?> instance;
 
+
 	@SuppressWarnings("unchecked")
 	synchronized public static <T> SyncPoint<T> getInstance() {
 		if (instance == null)
@@ -13,7 +14,12 @@ public class SyncPoint<T> {
 		return (SyncPoint<T>)instance;
 	}
 
-	private long version = -1L;
+	private static long version = -1L;
+
+	public static long getVersion(){
+		return version;
+	}
+
 	private Map<Long, T> results;
 
 	public SyncPoint() {

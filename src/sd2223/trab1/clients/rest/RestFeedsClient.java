@@ -15,6 +15,7 @@ import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.rest.FeedsService;
 import sd2223.trab1.api.rest.UsersService;
+import sd2223.trab1.kafka.sync.SyncPoint;
 
 
 public class RestFeedsClient extends RestClient implements Feeds {
@@ -71,7 +72,7 @@ public class RestFeedsClient extends RestClient implements Feeds {
     private Result<Message> clt_getMessage(String user, long mid) {
         Response r = target.path(user).path(Long.toString(mid))
                 .request()
-                .header(FeedsService.HEADER_VERSION, 47)
+                .header(FeedsService.HEADER_VERSION, SyncPoint.getVersion())
                 .get();
 
         return super.toJavaResult(r, Message.class);
@@ -81,7 +82,7 @@ public class RestFeedsClient extends RestClient implements Feeds {
         Response r = target.path(user)
                 .queryParam(FeedsService.TIME, time)
                 .request()
-                .header(FeedsService.HEADER_VERSION, 47)
+                .header(FeedsService.HEADER_VERSION, SyncPoint.getVersion())
                 .get();
 
         return super.toJavaResult(r, new GenericType<List<Message>>() {
@@ -92,7 +93,6 @@ public class RestFeedsClient extends RestClient implements Feeds {
         Response r = target.path(PERSONAL).path(user)
                 .queryParam(FeedsService.PWD, secret)
                 .request()
-                .header(FeedsService.HEADER_VERSION, 47)
                 .delete();
 
         return super.toJavaResult(r, Void.class);

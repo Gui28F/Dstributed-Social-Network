@@ -38,7 +38,7 @@ public interface FeedsService {
     @Path("/{" + USER + "}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    long postMessage(@HeaderParam(FeedsService.HEADER_VERSION) Long version, @PathParam(USER) String user, @QueryParam(PWD) String pwd, Message msg);
+    long postMessage(@PathParam(USER) String user, @QueryParam(PWD) String pwd, Message msg);
 
     /**
      * Removes the message identified by mid from the feed of user.
@@ -54,7 +54,7 @@ public interface FeedsService {
      */
     @DELETE
     @Path("/{" + USER + "}/{" + MID + "}")
-    void removeFromPersonalFeed(@HeaderParam(FeedsService.HEADER_VERSION) Long version, @PathParam(USER) String user, @PathParam(MID) long mid, @QueryParam(PWD) String pwd);
+    void removeFromPersonalFeed(@PathParam(USER) String user, @PathParam(MID) long mid, @QueryParam(PWD) String pwd);
 
     /**
      * Obtains the message with id from the feed of user (may be a remote user)
@@ -97,7 +97,7 @@ public interface FeedsService {
      */
     @POST
     @Path("/sub/{" + USER + "}/{" + USERSUB + "}")
-    void subUser(@HeaderParam(FeedsService.HEADER_VERSION) Long version, @PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
+    void subUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
 
     /**
      * UnSubscribe a user
@@ -113,7 +113,7 @@ public interface FeedsService {
      */
     @DELETE
     @Path("/sub/{" + USER + "}/{" + USERSUB + "}")
-    void unsubscribeUser(@HeaderParam(FeedsService.HEADER_VERSION) Long version, @PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
+    void unsubscribeUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
 
     /**
      * Subscribed users.
@@ -130,5 +130,5 @@ public interface FeedsService {
 
     @DELETE
     @Path("/personal/{" + USER + "}")
-    void deleteUserFeed(@HeaderParam(FeedsService.HEADER_VERSION) Long version, @PathParam(USER) String user, @QueryParam(PWD) String secret);
+    void deleteUserFeed(@PathParam(USER) String user, @QueryParam(PWD) String secret);
 }

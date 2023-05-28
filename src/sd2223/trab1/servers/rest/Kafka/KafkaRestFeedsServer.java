@@ -25,7 +25,7 @@ public class KafkaRestFeedsServer extends AbstractRestServer {
         config.register(Args.valueOf("-push", true) ? new KafkaRestFeedsPushResource(secret) : new KafkaRestFeedsPullResource(secret));
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         org.slf4j.Logger kafkaLogger = LoggerFactory.getLogger("org.apache.kafka");
 
         // Set the logging level to a higher level (e.g., INFO)
