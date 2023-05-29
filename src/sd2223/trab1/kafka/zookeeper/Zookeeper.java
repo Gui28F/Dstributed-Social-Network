@@ -1,8 +1,10 @@
 package sd2223.trab1.kafka.zookeeper;
 
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -16,8 +18,7 @@ public class Zookeeper implements Watcher {
     private static Zookeeper instance;
 
     public Zookeeper(String path) throws Exception {
-        this.connect();
-        createNode(path, new byte[0], CreateMode.PERSISTENT);
+        this.connect();createNode(path, new byte[0], CreateMode.PERSISTENT);
     }
 
     public static Zookeeper getInstance(String path) throws Exception {
@@ -71,6 +72,13 @@ public class Zookeeper implements Watcher {
             x.printStackTrace();
         }
         return Collections.emptyList();
+    }
+    public String getData(String path) {
+        try {
+            return Arrays.toString(client().getData(path, false, new Stat()));
+        } catch (InterruptedException | KeeperException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
