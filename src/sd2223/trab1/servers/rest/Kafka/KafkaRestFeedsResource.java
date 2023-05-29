@@ -130,6 +130,21 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
         return super.fromJavaResult(impl.listSubs(user));
     }
 
+    @Override
+    public void postServerInfo(String secret, String info) {
+        super.fromJavaResult(impl.postServerInfo(secret, info));
+    }
+
+    @Override
+    public String getServerInfo(String secret) {
+        return super.fromJavaResult(impl.getServerInfo(secret));
+    }
+
+    @Override
+    public long getServerVersion(String secret) {
+        return super.fromJavaResult(impl.getServerVersion(secret));
+    }
+
 
     @Override
     public void deleteUserFeed(String user, String secret) {
@@ -142,4 +157,5 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public Result<Void> deleteUserFeedKafka(String user, String secret) {
         return impl.deleteUserFeed(user, secret);
     }
+
 }

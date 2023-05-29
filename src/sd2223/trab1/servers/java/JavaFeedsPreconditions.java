@@ -141,4 +141,18 @@ public abstract class JavaFeedsPreconditions implements Feeds {
             return error(ErrorCode.INTERNAL_ERROR);
         }
     }
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return ok();
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return ok();
+    }
+
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return ok();
+    }
 }

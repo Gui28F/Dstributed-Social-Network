@@ -34,6 +34,21 @@ public class RestFeedsClient extends RestClient implements Feeds {
     }
 
     @Override
+    public Result<String> getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return null;
+    }
+
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return null;
+    }
+
+    @Override
     public Result<Message> getMessage(String user, long mid) {
         return super.reTry(() -> clt_getMessage(user, mid));
     }

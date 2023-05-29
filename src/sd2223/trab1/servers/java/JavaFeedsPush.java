@@ -1,5 +1,6 @@
 package sd2223.trab1.servers.java;
 
+import static sd2223.trab1.api.java.Result.ErrorCode.FORBIDDEN;
 import static sd2223.trab1.api.java.Result.error;
 import static sd2223.trab1.api.java.Result.ok;
 import static sd2223.trab1.api.java.Result.ErrorCode.NOT_FOUND;
@@ -19,12 +20,13 @@ import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.servers.Domain;
+import utils.JSON;
 
 public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPush {
 
     private static final long PERMANENT_REMOVAL_DELAY = 30;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    final Map<Long, Set<String>> msgs2users = new ConcurrentHashMap<>();
+    Map<Long, Set<String>> msgs2users = new ConcurrentHashMap<>();
 
     public JavaFeedsPush(String secret) {
         super(new JavaFeedsPushPreconditions(), secret);
@@ -43,7 +45,7 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
                     var users = e.getValue();
                     if (domain.equals(Domain.get())) {
                         while (!push_PushMessage(new PushMessage(users, msg)).isOK()) ;
-                    }else {
+                    } else {
                         while (!FeedsPushClients.get(domain).push_PushMessage(new PushMessage(users, msg)).isOK()) ;
                     }
                 }
@@ -91,6 +93,24 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         return ok();
     }
 
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        if (!secret.equals(super.secret))
+            return error(FORBIDDEN);
+        return ok(JSON.encode(this));
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        if (!secret.equals(this.secret))
+            return error(FORBIDDEN);
+        JavaFeedsPush server = JSON.decode(info, JavaFeedsPush.class);
+        this.feeds = server.feeds;
+        this.messages = server.messages;
+        this.msgs2users = server.msgs2users;
+        return ok();
+
+    }
 
     @Override
     public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
@@ -98,14 +118,14 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var preconditionsResult = preconditions.unsubscribeUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-        var u2 = FeedUser.from( userSub );
+        var u2 = FeedUser.from(userSub);
         Result<Void> ures2;
         System.out.println(u2);
         if (u2.domain().equals(Domain.get())) {
-            System.out.println(user + " "+ userSub);
+            System.out.println(user + " " + userSub);
             ures2 = push_updateFollowers(userSub, user, false);
             System.out.println(ures2);
-        }else
+        } else
             ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
         if (ures2.error() == NOT_FOUND)
             return error(NOT_FOUND);
@@ -115,6 +135,7 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         }
         return ok();
     }
+
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         var preconditionsResult = preconditions.getMessages(user, time);
@@ -135,9 +156,8 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
 
         if (following)
             followees.add(follower);
-        else
-            if(!followees.remove(follower))
-                return error(NOT_FOUND);
+        else if (!followees.remove(follower))
+            return error(NOT_FOUND);
 
         return ok();
     }

@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.kafka.sync.SyncPoint;
 import sd2223.trab1.servers.Domain;
 
 public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
@@ -26,7 +27,7 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     final protected T preconditions;
 
-    private String secret;
+    protected String secret;
 
     protected JavaFeedsCommon(T preconditions, String secret) {
         this.preconditions = preconditions;
@@ -149,6 +150,12 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
         return ok();
     }
 
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        if (!secret.equals(this.secret))
+            return error(FORBIDDEN);
+        return ok(SyncPoint.getVersion());
+    }
 
     static public record FeedUser(String user, String name, String pwd, String domain) {
         private static final String EMPTY_PASSWORD = "";

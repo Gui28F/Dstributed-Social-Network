@@ -47,6 +47,21 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     }
 
     @Override
+    public void postServerInfo(String secret, String info) {
+
+    }
+
+    @Override
+    public String getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public long getServerVersion(String secret) {
+        return -1;
+    }
+
+    @Override
     public List<String> listSubs(Long version, String user) {
         return super.fromJavaResult(impl.listSubs(user));
     }

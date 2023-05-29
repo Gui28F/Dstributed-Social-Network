@@ -52,6 +52,21 @@ public class SoapFeedsClient<T extends FeedsService> extends SoapClient implemen
 	}
 
 	@Override
+	public Result<String> getServerInfo(String secret) {
+		return null;
+	}
+
+	@Override
+	public Result<Void> postServerInfo(String secret, String info) {
+		return null;
+	}
+
+	@Override
+	public Result<Long> getServerVersion(String secret) {
+		return null;
+	}
+
+	@Override
 	public Result<Long> postMessage(String user, String pwd, Message msg) {
 		return error(NOT_IMPLEMENTED);
 	}

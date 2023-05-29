@@ -278,4 +278,19 @@ public class Mastodon implements Feeds {
     public Result<Void> deleteUserFeed(String user, String secret) {
         return error(NOT_IMPLEMENTED);
     }
+
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return null;
+    }
+
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return null;
+    }
 }

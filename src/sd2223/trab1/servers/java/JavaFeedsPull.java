@@ -97,6 +97,16 @@ public class JavaFeedsPull extends JavaFeedsCommon<FeedsPull> implements FeedsPu
         }
     }
 
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return null;
+    }
+
     public Result<List<Message>> pull_getTimeFilteredPersonalFeed(String user, long time) {
 
         var preconditionsResult = preconditions.pull_getTimeFilteredPersonalFeed(user, time);
