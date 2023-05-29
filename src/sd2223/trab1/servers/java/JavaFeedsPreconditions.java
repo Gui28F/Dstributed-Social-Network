@@ -125,6 +125,20 @@ public abstract class JavaFeedsPreconditions implements Feeds {
 
         return ok();
     }
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return null;
+    }
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return null;
+    }
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return null;
+    }
+
+
 
     protected boolean badParams(Object... params) {
         for (var p : params)
@@ -141,4 +155,6 @@ public abstract class JavaFeedsPreconditions implements Feeds {
             return error(ErrorCode.INTERNAL_ERROR);
         }
     }
+
+
 }

@@ -55,4 +55,19 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     public void deleteUserFeed(String user, String secret) {
         super.fromJavaResult(impl.deleteUserFeed(user, secret));
     }
+
+    @Override
+    public void postServerInfo(String secret, String info) {
+
+    }
+
+    @Override
+    public String getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public String getServerVersion(String secret) {
+        return null;
+    }
 }

@@ -52,4 +52,11 @@ public class JavaFeedsPullPreconditions extends JavaFeedsPreconditions implement
 
 		return ok();
 	}
+	@Override
+	public Result<Long> getServerVersion(String secret) {
+		return null;
+	}
+
+
+
 }

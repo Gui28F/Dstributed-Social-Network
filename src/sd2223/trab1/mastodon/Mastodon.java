@@ -273,9 +273,23 @@ public class Mastodon implements Feeds {
         return error(Result.ErrorCode.INTERNAL_ERROR);
     }
 
-    //TODO COMO È QUE SE FAZ E È SUPOSTO FAZER?
     @Override
     public Result<Void> deleteUserFeed(String user, String secret) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
         return error(NOT_IMPLEMENTED);
     }
 }

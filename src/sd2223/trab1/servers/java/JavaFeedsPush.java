@@ -1,5 +1,6 @@
 package sd2223.trab1.servers.java;
 
+import static sd2223.trab1.api.java.Result.ErrorCode.FORBIDDEN;
 import static sd2223.trab1.api.java.Result.error;
 import static sd2223.trab1.api.java.Result.ok;
 import static sd2223.trab1.api.java.Result.ErrorCode.NOT_FOUND;
@@ -19,12 +20,13 @@ import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.servers.Domain;
+import utils.JSON;
 
 public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPush {
 
     private static final long PERMANENT_REMOVAL_DELAY = 30;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    final Map<Long, Set<String>> msgs2users  = new ConcurrentHashMap<>();
+    Map<Long, Set<String>> msgs2users  = new ConcurrentHashMap<>();
 
     public JavaFeedsPush(String secret) {
         super(new JavaFeedsPushPreconditions(), secret);
@@ -138,5 +140,22 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
                 }, PERMANENT_REMOVAL_DELAY, TimeUnit.SECONDS);
             }
         }
+    }
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        if (!secret.equals(super.secret))
+            return error(FORBIDDEN);
+        return ok(JSON.encode(this));
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        if (!secret.equals(super.secret))
+            return error(FORBIDDEN);
+        JavaFeedsPush server = JSON.decode(info, JavaFeedsPush.class);
+        this.messages = server.messages;
+        this.feeds = server.feeds;
+        this.msgs2users = server.msgs2users;
+        return ok();
     }
 }

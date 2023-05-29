@@ -31,7 +31,7 @@ public class KafkaRestFeedsServer extends AbstractRestServer {
         // Set the logging level to a higher level (e.g., INFO)
         ((ch.qos.logback.classic.Logger) kafkaLogger).setLevel(ch.qos.logback.classic.Level.OFF);
         Args.use(args);
-        Domain.set(args[0], Long.valueOf(args[1]));
+        Domain.set(args[0], 2);
         new KafkaRestFeedsServer().start();
     }
 }

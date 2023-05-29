@@ -20,7 +20,6 @@ import sd2223.trab1.servers.rest.RestResource;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
         this.impl = impl;
         this.subscriber = KafkaEngine.getInstance().createSubscriber(Domain.get());
         this.sync = new SyncPoint<>();
-        this.zookeeperManager = ZookeeperManager.getInstance();
+        //this.zookeeperManager = ZookeeperManager.getInstance();
         subscriber.start(false, this);
     }
 
@@ -66,6 +65,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public long postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
         //long id = 256 * SyncPoint.getVersion() + Domain.uuid();
+        // msg.setId(id);
         long nSeq = KafkaEngine.getInstance().send(Domain.get(), new Function(KafkaEngine.POST_MESSAGE, parameters));
         Result<Long> res = (Result<Long>) sync.waitForResult(nSeq);
         return generateResponseIfIsOK(res, nSeq);
@@ -89,15 +89,17 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     @Override
     public Message getMessage(Long version, String user, long mid) {
-        if (version > SyncPoint.getVersion())
-            throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        //if (version > SyncPoint.getVersion())
+        //    throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessage(user, mid));
     }
 
     @Override
     public List<Message> getMessages(Long version, String user, long time) {
-        if (version > SyncPoint.getVersion())
-            throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        // if (version > SyncPoint.getVersion())
+        //    throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessages(user, time));
     }
 
@@ -128,8 +130,9 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     @Override
     public List<String> listSubs(Long version, String user) {
-        if (version > SyncPoint.getVersion())
-            throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        //if (version > SyncPoint.getVersion())
+        //  throw new WebApplicationException(Response.temporaryRedirect(zookeeperManager.getPrimaryURI()).build());
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.listSubs(user));
     }
 
@@ -144,5 +147,19 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     public Result<Void> deleteUserFeedKafka(String user, String secret) {
         return impl.deleteUserFeed(user, secret);
+    }
+
+    @Override
+    public void postServerInfo(String secret, String info) {
+    }
+
+    @Override
+    public String getServerInfo(String secret) {
+        return null;
+    }
+
+    @Override
+    public String getServerVersion(String secret) {
+        return null;
     }
 }

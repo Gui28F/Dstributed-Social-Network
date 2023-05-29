@@ -44,6 +44,7 @@ public class RestUsersClient extends RestClient implements Users {
         return super.toJavaResult(r, String.class);
     }
 
+
     @Override
     public Result<User> getUser(String name, String pwd) {
         return super.reTry(() -> clt_getUser(name, pwd));

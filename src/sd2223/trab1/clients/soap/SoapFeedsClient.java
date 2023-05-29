@@ -15,59 +15,76 @@ import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.soap.FeedsService;
 
 public class SoapFeedsClient<T extends FeedsService> extends SoapClient implements Feeds {
-	
-	public SoapFeedsClient( String serverURI ) {
-		super( serverURI );
-	}
 
-	private FeedsService stub;
-	synchronized protected FeedsService stub() {
-		if (stub == null) {
-			QName QNAME = new QName(FeedsService.NAMESPACE, FeedsService.NAME);
-			Service service = Service.create(super.toURL(super.uri + WSDL), QNAME);			
-			this.stub = service.getPort(sd2223.trab1.api.soap.FeedsService.class);
-			super.setTimeouts( (BindingProvider) stub);
-		}
-		return stub;
-	}
-	
-	@Override
-	public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().removeFromPersonalFeed(user, mid, pwd)) );
-	}
+    public SoapFeedsClient(String serverURI) {
+        super(serverURI);
+    }
 
-	@Override
-	public Result<Message> getMessage(String user, long mid) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().getMessage(user, mid) ) );
-	}
+    private FeedsService stub;
 
-	@Override
-	public Result<List<Message>> getMessages(String user, long time) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().getMessages(user, time) ) );
-	}	
+    synchronized protected FeedsService stub() {
+        if (stub == null) {
+            QName QNAME = new QName(FeedsService.NAMESPACE, FeedsService.NAME);
+            Service service = Service.create(super.toURL(super.uri + WSDL), QNAME);
+            this.stub = service.getPort(sd2223.trab1.api.soap.FeedsService.class);
+            super.setTimeouts((BindingProvider) stub);
+        }
+        return stub;
+    }
 
-	@Override
-	public Result<Void> deleteUserFeed(String user, String secret) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().deleteUserFeed(user, secret) ) );
-	}
+    @Override
+    public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
+        return super.reTry(() -> super.toJavaResult(() -> stub().removeFromPersonalFeed(user, mid, pwd)));
+    }
 
-	@Override
-	public Result<Long> postMessage(String user, String pwd, Message msg) {
-		return error(NOT_IMPLEMENTED);
-	}
+    @Override
+    public Result<Message> getMessage(String user, long mid) {
+        return super.reTry(() -> super.toJavaResult(() -> stub().getMessage(user, mid)));
+    }
 
-	@Override
-	public Result<Void> subUser(String user, String userSub, String pwd) {
-		return error(NOT_IMPLEMENTED);
-	}
+    @Override
+    public Result<List<Message>> getMessages(String user, long time) {
+        return super.reTry(() -> super.toJavaResult(() -> stub().getMessages(user, time)));
+    }
 
-	@Override
-	public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
-		return error(NOT_IMPLEMENTED);
-	}
+    @Override
+    public Result<Void> deleteUserFeed(String user, String secret) {
+        return super.reTry(() -> super.toJavaResult(() -> stub().deleteUserFeed(user, secret)));
+    }
 
-	@Override
-	public Result<List<String>> listSubs(String user) {
-		return error(NOT_IMPLEMENTED);
-	}
+    @Override
+    public Result<Long> postMessage(String user, String pwd, Message msg) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<Void> subUser(String user, String userSub, String pwd) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<List<String>> listSubs(String user) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<String> getServerInfo(String secret) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public Result<Void> postServerInfo(String secret, String info) {
+        return error(NOT_IMPLEMENTED);
+    }
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        return error(NOT_IMPLEMENTED);
+    }
+
+
 }

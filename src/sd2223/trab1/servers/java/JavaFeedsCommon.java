@@ -14,10 +14,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.kafka.common.protocol.types.Field;
 import sd2223.trab1.api.Message;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.kafka.sync.SyncPoint;
 import sd2223.trab1.servers.Domain;
+import utils.JSON;
 
 public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
     private static final long FEEDS_MID_PREFIX = 1_000_000_000;
@@ -26,7 +29,7 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     final protected T preconditions;
 
-    private String secret;
+    protected String secret;
 
     protected JavaFeedsCommon(T preconditions, String secret) {
         this.preconditions = preconditions;
@@ -153,6 +156,13 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
                 ufi.following().remove(u);
         }
         return ok();
+    }
+
+    @Override
+    public Result<Long> getServerVersion(String secret) {
+        if (!secret.equals(this.secret))
+            return error(FORBIDDEN);
+        return ok(SyncPoint.getVersion());
     }
 
 

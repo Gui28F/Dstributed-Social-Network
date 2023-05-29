@@ -23,4 +23,10 @@ public interface Feeds {
 
 	Result<Void> deleteUserFeed(String user, String secret);
 
+
+	Result<String> getServerInfo(String secret);
+
+	Result<Void> postServerInfo(String secret, String info);
+
+	Result<Long> getServerVersion(String secret);
 }
