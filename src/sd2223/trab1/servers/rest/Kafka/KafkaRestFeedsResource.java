@@ -87,11 +87,13 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     public Message getMessage(Long version, String user, long mid) {
         //if(version > SyncPoint.getVersion())
         //    throw new WebApplicationException(Response.temporaryRedirect( URI.create(A)).build());
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessage(user, mid));
     }
 
     @Override
     public List<Message> getMessages(Long version, String user, long time) {
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessages(user, time));
     }
 
@@ -122,6 +124,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     @Override
     public List<String> listSubs(Long version, String user) {
+        sync.waitForResult(version);
         return super.fromJavaResult(impl.listSubs(user));
     }
 

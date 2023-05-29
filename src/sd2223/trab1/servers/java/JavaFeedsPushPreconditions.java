@@ -9,6 +9,7 @@ import static sd2223.trab1.clients.Clients.FeedsPushClients;
 import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.java.Result;
+import sd2223.trab1.servers.Domain;
 import sd2223.trab1.servers.java.JavaFeedsCommon.FeedUser;
 
 public class JavaFeedsPushPreconditions extends JavaFeedsPreconditions implements FeedsPush {
@@ -30,10 +31,20 @@ public class JavaFeedsPushPreconditions extends JavaFeedsPreconditions implement
 		if (ures == NOT_FOUND || ures == FORBIDDEN)
 			return error(ures);
 
-		var u2 = FeedUser.from( userSub );
+		/*var u2 = FeedUser.from( userSub );
 		var ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
 		if( ures2.error() == NOT_FOUND)
-			return error(NOT_FOUND);	
+			return error(NOT_FOUND);	*/
+		var u2 = FeedUser.from( userSub );
+		Result<Void> ures2;
+		if (u2.domain().equals(Domain.get())) {
+			System.out.println(user + " "+ userSub);
+			ures2 = push_updateFollowers(userSub, user, false);
+			System.out.println(ures2);
+		}else
+			ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
+		if (ures2.error() == NOT_FOUND)
+			return error(NOT_FOUND);
 
 		return ok();
 	}

@@ -90,6 +90,21 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         }
         return ok();
     }
+
+
+    @Override
+    public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
+
+        var preconditionsResult = preconditions.unsubscribeUser(user, userSub, pwd);
+        if (!preconditionsResult.isOK())
+            return preconditionsResult;
+
+        FeedInfo ufi = feeds.computeIfAbsent(user, FeedInfo::new);
+        synchronized (ufi.user()) {
+            ufi.following().remove(userSub);
+        }
+        return ok();
+    }
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
         var preconditionsResult = preconditions.getMessages(user, time);
