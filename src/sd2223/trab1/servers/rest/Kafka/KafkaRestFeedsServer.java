@@ -27,11 +27,9 @@ public class KafkaRestFeedsServer extends AbstractRestServer {
 
     public static void main(String[] args) {
         org.slf4j.Logger kafkaLogger = LoggerFactory.getLogger("org.apache.kafka");
-
-        // Set the logging level to a higher level (e.g., INFO)
         ((ch.qos.logback.classic.Logger) kafkaLogger).setLevel(ch.qos.logback.classic.Level.OFF);
         Args.use(args);
-        Domain.set(args[0], 2);
+        Domain.set(args[0], Long.valueOf(args[1]));
         new KafkaRestFeedsServer().start();
     }
 }

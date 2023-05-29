@@ -98,7 +98,17 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var preconditionsResult = preconditions.unsubscribeUser(user, userSub, pwd);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-
+        var u2 = FeedUser.from( userSub );
+        Result<Void> ures2;
+        System.out.println(u2);
+        if (u2.domain().equals(Domain.get())) {
+            System.out.println(user + " "+ userSub);
+            ures2 = push_updateFollowers(userSub, user, false);
+            System.out.println(ures2);
+        }else
+            ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
+        if (ures2.error() == NOT_FOUND)
+            return error(NOT_FOUND);
         FeedInfo ufi = feeds.computeIfAbsent(user, FeedInfo::new);
         synchronized (ufi.user()) {
             ufi.following().remove(userSub);
@@ -120,13 +130,14 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var preconditionsResult = preconditions.push_updateFollowers(user, follower, following);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-
+        System.out.println(feeds.computeIfAbsent(user, FeedInfo::new));
         var followees = feeds.computeIfAbsent(user, FeedInfo::new).followees();
 
         if (following)
             followees.add(follower);
         else
-            followees.remove(follower);
+            if(!followees.remove(follower))
+                return error(NOT_FOUND);
 
         return ok();
     }

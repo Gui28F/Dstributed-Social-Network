@@ -62,6 +62,8 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     @Override
     public long postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
+        long id = 256 * SyncPoint.getVersion() + Domain.uuid();
+        msg.setId(id);
         long nSeq = KafkaEngine.getInstance().send(Domain.get(), new Function(KafkaEngine.POST_MESSAGE, parameters));
         Result<Long> res = (Result<Long>) sync.waitForResult(nSeq);
         return generateResponseIfIsOK(res, nSeq);

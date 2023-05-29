@@ -35,16 +35,6 @@ public class JavaFeedsPushPreconditions extends JavaFeedsPreconditions implement
 		var ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
 		if( ures2.error() == NOT_FOUND)
 			return error(NOT_FOUND);	*/
-		var u2 = FeedUser.from( userSub );
-		Result<Void> ures2;
-		if (u2.domain().equals(Domain.get())) {
-			System.out.println(user + " "+ userSub);
-			ures2 = push_updateFollowers(userSub, user, false);
-			System.out.println(ures2);
-		}else
-			ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
-		if (ures2.error() == NOT_FOUND)
-			return error(NOT_FOUND);
 
 		return ok();
 	}

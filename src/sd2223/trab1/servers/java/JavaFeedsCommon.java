@@ -47,11 +47,12 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
         var preconditionsResult = preconditions.postMessage(user, pwd, msg);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-
-        Long mid = serial.incrementAndGet();
-        msg.setId(mid);
-        msg.setCreationTime(System.currentTimeMillis());
-
+        Long mid;
+        if (msg.getId() == -1) {
+            mid = serial.incrementAndGet();
+            msg.setId(mid);
+            msg.setCreationTime(System.currentTimeMillis());
+        } else mid = msg.getId();
         FeedInfo ufi = feeds.computeIfAbsent(user, FeedInfo::new);
         synchronized (ufi.user()) {
             ufi.messages().add(mid);
