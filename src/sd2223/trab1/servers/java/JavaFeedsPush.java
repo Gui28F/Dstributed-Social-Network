@@ -24,7 +24,7 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
 
     private static final long PERMANENT_REMOVAL_DELAY = 30;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    final Map<Long, Set<String>> msgs2users = new ConcurrentHashMap<>();
+    final Map<Long, Set<String>> msgs2users  = new ConcurrentHashMap<>();
 
     public JavaFeedsPush(String secret) {
         super(new JavaFeedsPushPreconditions(), secret);

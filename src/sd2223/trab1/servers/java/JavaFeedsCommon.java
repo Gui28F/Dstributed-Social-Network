@@ -47,9 +47,11 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
         var preconditionsResult = preconditions.postMessage(user, pwd, msg);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-
-        Long mid = serial.incrementAndGet();
-        msg.setId(mid);
+        long mid = msg.getId();
+        if (mid == -1) {
+            mid = generateID();
+            msg.setId(mid);
+        }
         msg.setCreationTime(System.currentTimeMillis());
 
         FeedInfo ufi = feeds.computeIfAbsent(user, FeedInfo::new);
@@ -59,6 +61,11 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
         }
         return Result.ok(mid);
     }
+
+    public long generateID() {
+        return serial.incrementAndGet();
+    }
+
 
     @Override
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
