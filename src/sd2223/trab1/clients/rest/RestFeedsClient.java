@@ -35,17 +35,17 @@ public class RestFeedsClient extends RestClient implements Feeds {
 
     @Override
     public Result<String> getServerInfo(String secret) {
-        return null;
+        return super.reTry(() -> clt_getServerInfo(secret));
     }
 
     @Override
     public Result<Void> postServerInfo(String secret, String info) {
-        return null;
+        return super.reTry(() -> clt_postServerInfo(secret, info));
     }
 
     @Override
     public Result<Long> getServerVersion(String secret) {
-        return null;
+        return super.reTry(() -> clt_getServerVersion(secret));
     }
 
     @Override
@@ -84,6 +84,34 @@ public class RestFeedsClient extends RestClient implements Feeds {
     }
 
 
+    private Result<Long> clt_getServerVersion(String secret) {
+        Response r = target.path("server/version")
+                .queryParam(FeedsService.SECRET, secret)
+                .request()
+                .get();
+
+        return super.toJavaResult(r, Long.class);
+    }
+
+    private Result<String> clt_getServerInfo(String secret) {
+        Response r = target.path("server")
+                .queryParam(FeedsService.SECRET, secret)
+                .request()
+                .get();
+
+        return super.toJavaResult(r, String.class);
+    }
+
+    private Result<Void> clt_postServerInfo(String secret, String info) {
+        Response r = target.path("server")
+                .queryParam(FeedsService.SECRET, secret)
+                .request()
+                .post(Entity.entity(info, MediaType.APPLICATION_JSON_TYPE));
+
+        return super.toJavaResult(r, Void.class);
+    }
+
+
     private Result<Message> clt_getMessage(String user, long mid) {
         Response r = target.path(user).path(Long.toString(mid))
                 .request()
@@ -106,7 +134,7 @@ public class RestFeedsClient extends RestClient implements Feeds {
 
     public Result<Void> clt_deleteUserFeed(String user, String secret) {
         Response r = target.path(PERSONAL).path(user)
-                .queryParam(FeedsService.PWD, secret)
+                .queryParam(FeedsService.SECRET, secret)
                 .request()
                 .delete();
 

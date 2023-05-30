@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 
-public class Zookeeper implements Watcher {
+public class Zookeeper {
 
     private ZooKeeper _client;
     private final int TIMEOUT = 5000;
@@ -75,15 +75,11 @@ public class Zookeeper implements Watcher {
     }
     public String getData(String path) {
         try {
+           //System.out.println(Arrays.toString(client().getData(path, false, new Stat())) + "  aaaaaaa");
             return Arrays.toString(client().getData(path, false, new Stat()));
         } catch (InterruptedException | KeeperException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void process(WatchedEvent event) {
-        // TODO Auto-generated method stub
-        System.err.println(event);
-    }
 }

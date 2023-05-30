@@ -8,6 +8,7 @@ import static sd2223.trab1.clients.Clients.FeedsPushClients;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -95,14 +96,14 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
 
     @Override
     public Result<String> getServerInfo(String secret) {
-        if (!secret.equals(super.secret))
+        if (!Objects.equals(secret, JavaFeedsCommon.secret))
             return error(FORBIDDEN);
         return ok(JSON.encode(this));
     }
 
     @Override
     public Result<Void> postServerInfo(String secret, String info) {
-        if (!secret.equals(this.secret))
+        if (!Objects.equals(secret, JavaFeedsCommon.secret))
             return error(FORBIDDEN);
         JavaFeedsPush server = JSON.decode(info, JavaFeedsPush.class);
         this.feeds = server.feeds;
@@ -120,11 +121,8 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
             return preconditionsResult;
         var u2 = FeedUser.from(userSub);
         Result<Void> ures2;
-        System.out.println(u2);
         if (u2.domain().equals(Domain.get())) {
-            System.out.println(user + " " + userSub);
             ures2 = push_updateFollowers(userSub, user, false);
-            System.out.println(ures2);
         } else
             ures2 = FeedsPushClients.get(u2.domain()).push_updateFollowers(userSub, user, false);
         if (ures2.error() == NOT_FOUND)
@@ -151,7 +149,6 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
         var preconditionsResult = preconditions.push_updateFollowers(user, follower, following);
         if (!preconditionsResult.isOK())
             return preconditionsResult;
-        System.out.println(feeds.computeIfAbsent(user, FeedInfo::new));
         var followees = feeds.computeIfAbsent(user, FeedInfo::new).followees();
 
         if (following)

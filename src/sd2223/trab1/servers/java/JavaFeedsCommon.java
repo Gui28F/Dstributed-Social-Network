@@ -6,11 +6,7 @@ import static sd2223.trab1.api.java.Result.ok;
 import static sd2223.trab1.api.java.Result.ErrorCode.NOT_FOUND;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,11 +23,11 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     final protected T preconditions;
 
-    protected String secret;
+    public static String secret;
 
     protected JavaFeedsCommon(T preconditions, String secret) {
         this.preconditions = preconditions;
-        this.secret = secret;
+        JavaFeedsCommon.secret = secret;
     }
 
     protected Map<Long, Message> messages = new ConcurrentHashMap<>();
@@ -132,7 +128,7 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Void> deleteUserFeed(String user, String secret) {
-        if (!secret.equals(this.secret))
+        if (!Objects.equals(secret, JavaFeedsCommon.secret))
             return error(FORBIDDEN);
         var preconditionsResult = preconditions.deleteUserFeed(user, secret);
         if (!preconditionsResult.isOK())
@@ -152,7 +148,7 @@ public abstract class JavaFeedsCommon<T extends Feeds> implements Feeds {
 
     @Override
     public Result<Long> getServerVersion(String secret) {
-        if (!secret.equals(this.secret))
+        if (!Objects.equals(secret, JavaFeedsCommon.secret))
             return error(FORBIDDEN);
         return ok(SyncPoint.getVersion());
     }

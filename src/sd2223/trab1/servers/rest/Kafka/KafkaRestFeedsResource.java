@@ -14,23 +14,28 @@ import sd2223.trab1.kafka.KafkaEngine;
 import sd2223.trab1.kafka.KafkaSubscriber;
 import sd2223.trab1.kafka.RecordProcessor;
 import sd2223.trab1.kafka.sync.SyncPoint;
+import sd2223.trab1.kafka.zookeeper.ZookeeperManager;
 import sd2223.trab1.servers.Domain;
+import sd2223.trab1.servers.java.JavaFeedsCommon;
 import sd2223.trab1.servers.rest.RestResource;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
 @Singleton
 public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResource implements FeedsService, RecordProcessor {
     protected KafkaSubscriber subscriber;
+    protected ZookeeperManager zookeeper;
     protected SyncPoint<Result> sync;
     final protected T impl;
 
     public KafkaRestFeedsResource(T impl) {
         this.impl = impl;
+        zookeeper = ZookeeperManager.getInstance();
         this.subscriber = KafkaEngine.getInstance().createSubscriber(Domain.get());
         this.sync = new SyncPoint<>();
         subscriber.start(false, this);
@@ -87,15 +92,40 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     @Override
     public Message getMessage(Long version, String user, long mid) {
-        //if(version > SyncPoint.getVersion())
-        //    throw new WebApplicationException(Response.temporaryRedirect( URI.create(A)).build());
-        sync.waitForResult(version);
+        if (zookeeper.isPrimary())
+            sync.waitForResult(version);
+        else if (version > SyncPoint.getVersion()) {
+            String url = zookeeper.getPrimaryURI() + "/" + user + "/" + mid;
+            System.out.println(url+" 1234");
+            try {
+                URI uri = new URI(url);
+                throw new WebApplicationException(Response.temporaryRedirect(uri).
+                        header(FeedsService.HEADER_VERSION, version).build());
+            } catch (URISyntaxException e) {
+
+            }
+
+        }
+        //sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessage(user, mid));
     }
 
     @Override
     public List<Message> getMessages(Long version, String user, long time) {
-        sync.waitForResult(version);
+        if (zookeeper.isPrimary())
+            sync.waitForResult(version);
+        else if (version > SyncPoint.getVersion()) {
+            String url = zookeeper.getPrimaryURI() + "/" + user + "?time=" + time;
+            try {
+                URI uri = new URI(url);
+                throw new WebApplicationException(Response.temporaryRedirect(uri).
+                        header(FeedsService.HEADER_VERSION, version).build());
+            } catch (URISyntaxException e) {
+
+            }
+
+        }
+        //sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessages(user, time));
     }
 
@@ -126,7 +156,20 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
 
     @Override
     public List<String> listSubs(Long version, String user) {
-        sync.waitForResult(version);
+        if (zookeeper.isPrimary())
+            sync.waitForResult(version);
+        else if (version > SyncPoint.getVersion()) {
+            String url = zookeeper.getPrimaryURI().toString() + "/sub/list/" + user;
+            try {
+                URI uri = new URI(url);
+                throw new WebApplicationException(Response.temporaryRedirect(uri).
+                        header(FeedsService.HEADER_VERSION, version).build());
+            } catch (URISyntaxException e) {
+
+            }
+
+        }
+        //  sync.waitForResult(version);
         return super.fromJavaResult(impl.listSubs(user));
     }
 

@@ -8,6 +8,7 @@ import sd2223.trab1.api.PushMessage;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.FeedsPush;
 import sd2223.trab1.api.rest.FeedsService;
+import sd2223.trab1.kafka.sync.SyncPoint;
 
 public class RestFeedsPushClient extends RestFeedsClient implements FeedsPush {
 
@@ -19,22 +20,22 @@ public class RestFeedsPushClient extends RestFeedsClient implements FeedsPush {
 	public Result<Void> push_PushMessage(PushMessage msg) {
 		return super.reTry(() -> clt_pushMessage(msg));
 	}
-	
+
 	@Override
 	public Result<Void> push_updateFollowers(String user, String follower, boolean following) {
 		return super.reTry(() -> clt_updateFollowers(user, follower, following));
 	}
-	
+
 	private Result<Void> clt_pushMessage(PushMessage pm) {
-		Response r = target.request().header(FeedsService.HEADER_VERSION, 47)
+		Response r = target.request().header(FeedsService.HEADER_VERSION, SyncPoint.getVersion())
 				.post(Entity.entity(pm, MediaType.APPLICATION_JSON));
 
 		return super.toJavaResult(r, Void.class);
 	}
-	
+
 	private Result<Void> clt_updateFollowers(String user, String follower, boolean following) {
 		Response r = target.path("followers").path(user).path(follower)
-				.request().header(FeedsService.HEADER_VERSION, 47)
+				.request().header(FeedsService.HEADER_VERSION, SyncPoint.getVersion())
 				.put(Entity.entity(following, MediaType.APPLICATION_JSON));
 
 		return super.toJavaResult(r, Void.class);
