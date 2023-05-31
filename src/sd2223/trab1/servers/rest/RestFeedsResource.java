@@ -47,7 +47,7 @@ public abstract class RestFeedsResource<T extends Feeds> extends RestResource im
     }
 
     @Override
-    public void postServerInfo(String secret, String info) {
+    public void postServerInfo(String secret, String info,long version) {
 
     }
 

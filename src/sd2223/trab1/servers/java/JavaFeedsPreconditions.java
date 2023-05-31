@@ -126,6 +126,7 @@ public abstract class JavaFeedsPreconditions implements Feeds {
         return ok();
     }
 
+
     protected boolean badParams(Object... params) {
         for (var p : params)
             if (p == null)
@@ -147,7 +148,7 @@ public abstract class JavaFeedsPreconditions implements Feeds {
     }
 
     @Override
-    public Result<Void> postServerInfo(String secret, String info) {
+    public Result<Void> postServerInfo(String secret, String info,long version) {
         return ok();
     }
 

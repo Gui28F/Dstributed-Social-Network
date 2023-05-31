@@ -67,7 +67,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     @Override
     public long postMessage(String user, String pwd, Message msg) {
         Object[] parameters = {user, pwd, msg};
-        long id = 256 * SyncPoint.getVersion() + Domain.uuid();
+        long id = 256 * (SyncPoint.getVersion() + 1) + Domain.uuid();
         msg.setId(id);
         long nSeq = KafkaEngine.getInstance().send(Domain.get(), new Function(KafkaEngine.POST_MESSAGE, parameters));
         Result<Long> res = (Result<Long>) sync.waitForResult(nSeq);
@@ -96,7 +96,7 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
             sync.waitForResult(version);
         else if (version > SyncPoint.getVersion()) {
             String url = zookeeper.getPrimaryURI() + "/" + user + "/" + mid;
-            System.out.println(url+" 1234");
+            System.out.println(url + " 1234");
             try {
                 URI uri = new URI(url);
                 throw new WebApplicationException(Response.temporaryRedirect(uri).
@@ -174,8 +174,9 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
     }
 
     @Override
-    public void postServerInfo(String secret, String info) {
-        super.fromJavaResult(impl.postServerInfo(secret, info));
+    public void postServerInfo(String secret, String info, long version) {
+        sync.setVersion(version);
+        super.fromJavaResult(impl.postServerInfo(secret, info, version));
     }
 
     @Override

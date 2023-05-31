@@ -19,6 +19,7 @@ public interface FeedsService {
     String DOMAIN = "domain";
     String USERSUB = "userSub";
     String SECRET = "secret";
+    String VERSION = "version";
     String PATH = "/feeds";
 
     /**
@@ -133,9 +134,9 @@ public interface FeedsService {
     void deleteUserFeed(@PathParam(USER) String user, @QueryParam(SECRET) String secret);
 
     @POST
-    @Path("/server/")
+    @Path("/server/{" + VERSION + "}")
     @Consumes(MediaType.APPLICATION_JSON)
-    void postServerInfo(@QueryParam(SECRET) String secret, String info);
+    void postServerInfo(@QueryParam(SECRET) String secret, String info, @PathParam(VERSION) long version);
 
     @GET
     @Path("/server/")

@@ -25,7 +25,7 @@ public interface Feeds {
 
 	Result<String> getServerInfo(String secret);
 
-	Result<Void> postServerInfo(String secret, String info);
+	Result<Void> postServerInfo(String secret, String info, long version);
 
 	Result<Long> getServerVersion(String secret);
 

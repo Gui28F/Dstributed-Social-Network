@@ -102,7 +102,7 @@ public class JavaFeedsPush extends JavaFeedsCommon<FeedsPush> implements FeedsPu
     }
 
     @Override
-    public Result<Void> postServerInfo(String secret, String info) {
+    public Result<Void> postServerInfo(String secret, String info, long version) {
         if (!Objects.equals(secret, JavaFeedsCommon.secret))
             return error(FORBIDDEN);
         JavaFeedsPush server = JSON.decode(info, JavaFeedsPush.class);

@@ -57,7 +57,7 @@ public class SoapFeedsClient<T extends FeedsService> extends SoapClient implemen
 	}
 
 	@Override
-	public Result<Void> postServerInfo(String secret, String info) {
+	public Result<Void> postServerInfo(String secret, String info, long version) {
 		return null;
 	}
 

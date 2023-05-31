@@ -39,8 +39,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
     }
 
     @Override
-    public Result<Void> postServerInfo(String secret, String info) {
-        return super.reTry(() -> clt_postServerInfo(secret, info));
+    public Result<Void> postServerInfo(String secret, String info, long version) {
+        return super.reTry(() -> clt_postServerInfo(secret, info, version));
     }
 
     @Override
@@ -102,8 +102,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
         return super.toJavaResult(r, String.class);
     }
 
-    private Result<Void> clt_postServerInfo(String secret, String info) {
-        Response r = target.path("server")
+    private Result<Void> clt_postServerInfo(String secret, String info, long version) {
+        Response r = target.path("server").path(String.valueOf(version))
                 .queryParam(FeedsService.SECRET, secret)
                 .request()
                 .post(Entity.entity(info, MediaType.APPLICATION_JSON_TYPE));

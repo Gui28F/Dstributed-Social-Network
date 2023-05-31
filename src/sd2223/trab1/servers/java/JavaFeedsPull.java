@@ -103,7 +103,7 @@ public class JavaFeedsPull extends JavaFeedsCommon<FeedsPull> implements FeedsPu
     }
 
     @Override
-    public Result<Void> postServerInfo(String secret, String info) {
+    public Result<Void> postServerInfo(String secret, String info, long version) {
         return null;
     }
 

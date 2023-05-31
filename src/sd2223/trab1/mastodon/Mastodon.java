@@ -14,6 +14,8 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.reflect.TypeToken;
 
+import sd2223.trab1.servers.java.JavaFeedsPreconditions;
+import sd2223.trab1.servers.java.JavaFeedsPushPreconditions;
 import utils.JSON;
 
 import java.security.SecureRandom;
@@ -31,21 +33,6 @@ public class Mastodon implements Feeds {
 
     static String MASTODON_SERVER_URI = MASTODON_NOVA_SERVER_URI;
 
-
-    /*private static final String clientKey = "PjbCuhbYnjitka6UYn6onK2CX32jMYPqUfGovsOnwIA";
-    private static final String clientSecret = "yTtbhCVIIPoFUpVyfjZyfKhUCslM14uj09vxn76QnDc";
-    private static final String accessTokenStr = "yhWvdCGdiA7h-yQIpqAqDcGGeYgcOgrsHRmfhv9FG3U";
-    */
-    //quim_coubes
-    /*private static final String clientKey = "z59r22ZOfNEhS7S6JG8J6uhELhKv29zJhrNYcKWkmOs";
-    private static final String clientSecret = "O8nk_cHc_A0c_cYR4XINJ-abYJbtOl6vW9UArYCr7Ms";
-    private static final String accessTokenStr = "-Qwar5svmwKh1yexOeCr4ONvYmMG8m8DC2eFWH0-ZyE";
-*/
-
-    /* private static final String clientKey = "df6stWVa3_nYHJKE-Rq2EIO-6Bjdwej707h2wgtQjV0";
-     private static final String clientSecret = "maJWFGlXqirEQS0y9oSJcIXyhU2-0zJj7liyNEsAFbc";
-     private static final String accessTokenStr = "Lx2ZetIS2xYCjzaJzUT-Nc2ddlpk7UuilVYBRzSJ7UI";
- */
     //NOVA
     private static final String clientKey = "bTsA8mwUlJmbDI2jdpOiL1NI6L8WdsyPrIaMYmSMHQI";
     private static final String clientSecret = "DGkAHzR1InSQ7E07u7mUWAwuAprf8-Issva0sXLYunMc";
@@ -54,7 +41,6 @@ public class Mastodon implements Feeds {
     static final String STATUSES_PATH = "/api/v1/statuses";
     static final String TIMELINES_PATH = "/api/v1/timelines/home?since_id=";
     static final String ACCOUNT_FOLLOWING_PATH = "/api/v1/accounts/%s/following";
-    static final String VERIFY_CREDENTIALS_PATH = "/api/v1/accounts/verify_credentials";
     static final String SEARCH_ACCOUNTS_PATH = "/api/v1/accounts/search?q=";
     static final String ACCOUNT_FOLLOW_PATH = "/api/v1/accounts/%s/follow";
     static final String ACCOUNT_UNFOLLOW_PATH = "/api/v1/accounts/%s/unfollow";
@@ -65,8 +51,10 @@ public class Mastodon implements Feeds {
     protected OAuth2AccessToken accessToken;
 
     private static Mastodon impl;
+    private JavaFeedsPreconditions preconditions;
 
     protected Mastodon(boolean saveState) {
+        preconditions = new JavaFeedsPushPreconditions();
         try {
             service = new ServiceBuilder(clientKey).apiSecret(clientSecret).build(MastodonApi.instance());
             accessToken = new OAuth2AccessToken(accessTokenStr);
@@ -99,6 +87,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<Long> postMessage(String user, String pwd, Message msg) {
+        var precond = preconditions.postMessage(user, pwd, msg);
+        if (!precond.isOK())
+            return precond;
         try {
             final OAuthRequest request = new OAuthRequest(Verb.POST, getEndpoint(STATUSES_PATH));
             JSON.toMap(new PostStatusArgs(msg.getText())).forEach((k, v) -> {
@@ -121,14 +112,13 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<List<Message>> getMessages(String user, long time) {
+        var precond = preconditions.getMessages(user, time);
+        if (!precond.isOK())
+            return precond;
         try {
             long id = time;
-            // id += random.nextLong(1000);
-            //System.out.println(id);
             id = id << 16;
             id++;
-            // System.out.println(id);
-            // id += random.nextLong((long) Math.pow(2, 16));
             final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(TIMELINES_PATH + id));
 
             service.signRequest(accessToken, request);
@@ -150,6 +140,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<Void> removeFromPersonalFeed(String user, long mid, String pwd) {
+        var precond = preconditions.removeFromPersonalFeed(user, mid, pwd);
+        if (!precond.isOK())
+            return precond;
         try {
             final OAuthRequest request = new OAuthRequest(Verb.DELETE, getEndpoint(STATUSES_PATH + "/" + mid));
 
@@ -168,6 +161,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<Message> getMessage(String user, long mid) {
+        var precond = preconditions.getMessage(user, mid);
+        if (!precond.isOK())
+            return precond;
         try {
             final OAuthRequest request = new OAuthRequest(Verb.GET, getEndpoint(STATUSES_PATH + "/" + mid));
 
@@ -177,8 +173,6 @@ public class Mastodon implements Feeds {
             if (response.getCode() == HTTP_OK) {
                 PostStatusResult res = JSON.decode(response.getBody(), new TypeToken<PostStatusResult>() {
                 });
-                //Message msg = res.toMessage();
-                // fillMsg(msg, user);
                 return ok(res.toMessage());
             }
             return error(getErrorCodeFrom(response.getCode()));
@@ -210,6 +204,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<Void> subUser(String user, String userSub, String pwd) {
+        var precond = preconditions.subUser(user, userSub, pwd);
+        if (!precond.isOK())
+            return precond;
         Result<Long> res = getUserID(userSub);
         long id;
         if (res.isOK())
@@ -230,6 +227,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<Void> unsubscribeUser(String user, String userSub, String pwd) {
+        var precond = preconditions.unsubscribeUser(user, userSub, pwd);
+        if (!precond.isOK())
+            return precond;
         Result<Long> res = getUserID(userSub);
         long id;
         if (res.isOK())
@@ -250,6 +250,9 @@ public class Mastodon implements Feeds {
 
     @Override
     public Result<List<String>> listSubs(String user) {
+        var precond = preconditions.listSubs(user);
+        if (!precond.isOK())
+            return precond;
         Result<Long> res = getUserID(user);
         long id;
         if (res.isOK())
@@ -272,8 +275,6 @@ public class Mastodon implements Feeds {
         }
         return error(Result.ErrorCode.INTERNAL_ERROR);
     }
-
-    //TODO COMO È QUE SE FAZ E È SUPOSTO FAZER?
     @Override
     public Result<Void> deleteUserFeed(String user, String secret) {
         return error(NOT_IMPLEMENTED);
@@ -285,7 +286,7 @@ public class Mastodon implements Feeds {
     }
 
     @Override
-    public Result<Void> postServerInfo(String secret, String info) {
+    public Result<Void> postServerInfo(String secret, String info, long version) {
         return null;
     }
 

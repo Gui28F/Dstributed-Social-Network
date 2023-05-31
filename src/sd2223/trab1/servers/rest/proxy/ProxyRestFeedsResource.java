@@ -57,7 +57,7 @@ public class ProxyRestFeedsResource extends RestResource implements FeedsService
     }
 
     @Override
-    public void postServerInfo(String secret, String info) {
+    public void postServerInfo(String secret, String info, long version) {
 
     }
 
