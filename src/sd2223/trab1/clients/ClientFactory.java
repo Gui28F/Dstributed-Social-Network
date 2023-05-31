@@ -9,9 +9,6 @@ import com.google.common.cache.LoadingCache;
 
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.discovery.Discovery;
-import sd2223.trab1.tls.InsecureHostnameVerifier;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class ClientFactory<T> {
 
@@ -26,8 +23,6 @@ public class ClientFactory<T> {
 		this.restClientFunc = restClientFunc;
 		this.soapClientFunc = soapClientFunc;
 		this.serviceName = serviceName;
-		//TODO
-		HttpsURLConnection.setDefaultHostnameVerifier(new InsecureHostnameVerifier());
 	}
 	
 	private T newClient( String serverURI ) {

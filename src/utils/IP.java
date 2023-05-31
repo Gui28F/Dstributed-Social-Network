@@ -7,7 +7,7 @@ public class IP {
 
 	public static String hostAddress() {
 		try {
-			return InetAddress.getLocalHost().getHostAddress();
+			return InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 			return "?.?.?.?";
 		}

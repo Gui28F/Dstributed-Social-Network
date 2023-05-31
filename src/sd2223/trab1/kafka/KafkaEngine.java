@@ -7,25 +7,12 @@ import java.util.List;
 public class KafkaEngine {
     public static final String POST_MESSAGE = "postMessageKafka";
     public static final String REMOVE_FROM_PERSONAL_FEED = "removeFromPersonalFeedKafka";
-    public static final String GET_MESSAGE = "getMessageKafka";
-    public static final String GET_MESSAGES = "getMessagesKafka";
     public static final String SUB_USER = "subUserKafka";
     public static final String UNSUBSCRIBE_USER = "unsubscribeUserKafka";
-    public static final String LIST_SUBS = "listSubsKafka";
     public static final String DELETE_USER_FEED = "deleteUserFeedKafka";
-    public static final String PULL_GET_TIME_FILTERED_PERSONAL_FEED = "pull_getTimeFilteredPersonalFeedKafka";
-    public static final String PUSH_PUSH_MESSAGE = "push_PushMessageKafka";
-    public static final String PUSH_UPDATE_FOLLOWERS = "push_updateFollowersKafka";
-    public static final String DELETE_FROM_USER_FEED = "deleteFromUserFeedKafka";
     private KafkaPublisher publisher;
     private static final String FROM_BEGINNING = "earliest";
     private static final String KAFKA_BROKERS = "kafka:9092";
-   /* private String[] topics = {POST_MESSAGE, REMOVE_FROM_PERSONAL_FEED, GET_MESSAGE, GET_MESSAGES, SUB_USER, UNSUBSCRIBE_USER,
-            LIST_SUBS, DELETE_USER_FEED, PULL_GET_TIME_FILTERED_PERSONAL_FEED, PUSH_PUSH_MESSAGE, PUSH_UPDATE_FOLLOWERS,
-            DELETE_FROM_USER_FEED};
-    static final String TOPIC = "topic";
-
-    */
     private static KafkaEngine impl;
     private KafkaEngine() {
         this.publisher = KafkaPublisher.createPublisher(KAFKA_BROKERS);
