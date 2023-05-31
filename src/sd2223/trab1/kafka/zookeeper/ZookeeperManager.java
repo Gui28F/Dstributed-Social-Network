@@ -79,7 +79,7 @@ public class ZookeeperManager implements Watcher {
             RestFeedsClient c = new RestFeedsClient(serverURI);
             Result<Long> res = c.getServerVersion(JavaFeedsCommon.secret);
             if (res.isOK()) {
-                if (res.value() > maxVersion) {
+                if (res.value() > maxVersion || (res.value() == maxVersion && Objects.equals(serverURI, primaryURI))) {
                     maxVersion = res.value();
                     mostRecentServerURI = serverURI;
                 }
