@@ -22,7 +22,7 @@ public class RestFeedsServer extends AbstractRestServer {
     @Override
     protected void registerResources(ResourceConfig config) {
         String secret = Args.valueOf("-secret", "EMPTY");
-        config.register(Args.valueOf("-push", true) ? new RestFeedsPushResource(secret) : new RestFeedsPullResource(secret));
+        config.register(new RestFeedsPushResource(secret));
     }
 
     public static void main(String[] args) throws Exception {

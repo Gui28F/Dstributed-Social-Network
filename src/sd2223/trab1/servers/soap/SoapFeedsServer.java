@@ -14,7 +14,7 @@ public class SoapFeedsServer extends AbstractSoapServer<SoapFeedsWebService<?>> 
 
     protected SoapFeedsServer(String secret) {
 
-        super(false, Log, Feeds.SERVICENAME, PORT, Args.valueOf("-push", true) ? new SoapFeedsPushWebService(secret) : new SoapFeedsPullWebService(secret));
+        super(false, Log, Feeds.SERVICENAME, PORT, new SoapFeedsPushWebService(secret));
     }
 
     public static void main(String[] args) throws Exception {

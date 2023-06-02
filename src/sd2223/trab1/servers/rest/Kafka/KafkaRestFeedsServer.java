@@ -22,7 +22,7 @@ public class KafkaRestFeedsServer extends AbstractRestServer {
     @Override
     protected void registerResources(ResourceConfig config) {
         String secret = Args.valueOf("-secret", "EMPTY");
-        config.register(Args.valueOf("-push", true) ? new KafkaRestFeedsPushResource(secret) : new KafkaRestFeedsPullResource(secret));
+        config.register(new KafkaRestFeedsPushResource(secret));
     }
 
     public static void main(String[] args) {
