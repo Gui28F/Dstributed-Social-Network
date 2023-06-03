@@ -25,16 +25,12 @@ public class ZookeeperManager implements Watcher {
 
 
     private ZookeeperManager() {
-        // FeedsClients.get(Domain.get());
         try {
-            System.out.println(1);
             this.client = Zookeeper.getInstance(ROOT);
-            System.out.println(2);
             node = client.createNode(ROOT + FeedsService.PATH + "_", AbstractRestServer.SERVER_URI.getBytes(), CreateMode.EPHEMERAL_SEQUENTIAL);
-            System.out.println(3);
-            selectPrimary(client.getChildren(ROOT, this));
-            System.out.println(4);
+            primaryURI = client.getData(node);
             isPrimary = false;
+            selectPrimary(client.getChildren(ROOT, this));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -75,9 +75,5 @@ public class Message implements Serializable {
                 + ", text=" + text + "]";
     }
 
-    //@Override
-  //  public String toString() {
-     //   return "Msg[" + id + "]";
-    //}
 
 }

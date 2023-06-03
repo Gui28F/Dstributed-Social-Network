@@ -23,8 +23,6 @@ public class RestUsersServer extends AbstractRestServer {
     protected void registerResources(ResourceConfig config) {
 		String secret = Args.valueOf("-secret", "EMPTY");
 		config.register( new RestUsersResource(secret));
-//		config.register(new GenericExceptionMapper());
-//		config.register(new CustomLoggingFilter());
 	}
 	
 	

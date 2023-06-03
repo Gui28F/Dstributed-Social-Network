@@ -96,7 +96,6 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
             sync.waitForResult(version);
         else if (version > SyncPoint.getVersion()) {
             String url = zookeeper.getPrimaryURI() + "/" + user + "/" + mid;
-            System.out.println(url + " 1234");
             try {
                 URI uri = new URI(url);
                 throw new WebApplicationException(Response.temporaryRedirect(uri).
@@ -106,7 +105,6 @@ public abstract class KafkaRestFeedsResource<T extends Feeds> extends RestResour
             }
 
         }
-        //sync.waitForResult(version);
         return super.fromJavaResult(impl.getMessage(user, mid));
     }
 

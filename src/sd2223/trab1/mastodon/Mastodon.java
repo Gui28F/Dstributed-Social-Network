@@ -193,7 +193,6 @@ public class Mastodon implements Feeds {
                 });
                 if (!res.isEmpty())
                     return ok(res.get(0).getId());
-                    //TODO retorna o que se a pesquisa der mais do que um user?
                 else return error(NOT_FOUND);
             }
         } catch (Exception x) {

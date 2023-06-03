@@ -75,7 +75,6 @@ public class Zookeeper {
     }
     public String getData(String path) {
         try {
-           //System.out.println(Arrays.toString(client().getData(path, false, new Stat())) + "  aaaaaaa");
             return Arrays.toString(client().getData(path, false, new Stat()));
         } catch (InterruptedException | KeeperException e) {
             throw new RuntimeException(e);
